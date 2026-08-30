@@ -1,0 +1,266 @@
+{
+  "status": "PASS",
+  "checks_passed": 47,
+  "checks_total": 47,
+  "checks": [
+    {
+      "name": "mimic: locked primary denominator",
+      "passed": true,
+      "detail": 10504
+    },
+    {
+      "name": "mimic: locked primary categories",
+      "passed": true,
+      "detail": [
+        3859,
+        4022,
+        1473,
+        1150
+      ]
+    },
+    {
+      "name": "mimic: category arithmetic",
+      "passed": true,
+      "detail": 10504
+    },
+    {
+      "name": "mimic: width equals indeterminate proportion",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "mimic: one cluster-bootstrap interval for width",
+      "passed": true,
+      "detail": [
+        0.241726,
+        0.258215
+      ]
+    },
+    {
+      "name": "mimic: primary/sensitivity identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "mimic: source flow reconciles",
+      "passed": true,
+      "detail": 85122
+    },
+    {
+      "name": "mimic: structural censoring reconciles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "mimic: recovery sensitivity first_recovery_primary categories sum",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "mimic: recovery sensitivity two_observed_recoveries_at_least_6h_apart categories sum",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "mimic: recovery sensitivity recovery_confirmed_24to48h_without_intervening_relapse categories sum",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "mimic: strict ICU-acquired categories sum",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "mimic: observation process uses patients",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "mimic: observation process contains no IPW",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sicdb: locked primary denominator",
+      "passed": true,
+      "detail": 2472
+    },
+    {
+      "name": "sicdb: locked primary categories",
+      "passed": true,
+      "detail": [
+        652,
+        925,
+        605,
+        290
+      ]
+    },
+    {
+      "name": "sicdb: category arithmetic",
+      "passed": true,
+      "detail": 2472
+    },
+    {
+      "name": "sicdb: width equals indeterminate proportion",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sicdb: one cluster-bootstrap interval for width",
+      "passed": true,
+      "detail": [
+        0.342798,
+        0.380551
+      ]
+    },
+    {
+      "name": "sicdb: primary/sensitivity identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sicdb: source flow reconciles",
+      "passed": true,
+      "detail": 27223
+    },
+    {
+      "name": "sicdb: structural censoring reconciles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sicdb: recovery sensitivity first_recovery_primary categories sum",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sicdb: recovery sensitivity two_observed_recoveries_at_least_6h_apart categories sum",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sicdb: recovery sensitivity recovery_confirmed_24to48h_without_intervening_relapse categories sum",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sicdb: strict ICU-acquired categories sum",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sicdb: observation process uses patients",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sicdb: observation process contains no IPW",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "eicu: locked primary denominator",
+      "passed": true,
+      "detail": 14599
+    },
+    {
+      "name": "eicu: locked primary categories",
+      "passed": true,
+      "detail": [
+        4532,
+        5104,
+        3334,
+        1629
+      ]
+    },
+    {
+      "name": "eicu: category arithmetic",
+      "passed": true,
+      "detail": 14599
+    },
+    {
+      "name": "eicu: width equals indeterminate proportion",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "eicu: one cluster-bootstrap interval for width",
+      "passed": true,
+      "detail": [
+        0.326502,
+        0.353454
+      ]
+    },
+    {
+      "name": "eicu: primary/sensitivity identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "eicu: source flow reconciles",
+      "passed": true,
+      "detail": 165726
+    },
+    {
+      "name": "eicu: structural censoring reconciles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "eicu: recovery sensitivity first_recovery_primary categories sum",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "eicu: recovery sensitivity two_observed_recoveries_at_least_6h_apart categories sum",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "eicu: recovery sensitivity recovery_confirmed_24to48h_without_intervening_relapse categories sum",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "eicu: strict ICU-acquired categories sum",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "eicu: observation process uses patients",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "eicu: observation process contains no IPW",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "eICU: true unique-patient two-stage bootstrap",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "eICU: primary unique patient count",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "eICU: repeated primary-admission patient count",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "eICU: fixed thinning reference count",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "eICU: thinning reference is selected subset",
+      "passed": true,
+      "detail": 0.638605
+    }
+  ]
+}

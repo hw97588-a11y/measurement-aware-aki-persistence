@@ -12,6 +12,8 @@ authors:
     orcid: "https://orcid.org/0000-0002-6161-129X"
 version: 1.0.0
 date-released: 2026-08-30
+repository-code: "https://github.com/hw97588-a11y/measurement-aware-aki-persistence"
+url: "https://github.com/hw97588-a11y/measurement-aware-aki-persistence"
 license: MIT
 keywords:
   - acute kidney injury

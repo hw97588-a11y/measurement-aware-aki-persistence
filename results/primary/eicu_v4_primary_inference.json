@@ -2,6 +2,18 @@
   "source": "eICU-CRD v2.0",
   "scope": "v4 ICU-coverage primary phenotype, structural-censoring separation, threshold robustness, and cluster-appropriate partial-identification inference.",
   "denominator_definition": "First AKI episodes with database ICU coverage continuing through first positive creatinine plus 48 h; no subsequent creatinine measurement is required for inclusion.",
+  "population_structure": {
+    "adult_first_continuous_icu_spells": 165726,
+    "unique_patients_in_source_spells": 138811,
+    "patients_with_multiple_source_spells": 18840,
+    "first_aki_episodes": 26567,
+    "unique_patients_with_first_aki_episode": 24498,
+    "patients_with_multiple_first_aki_episode_admissions": 1598,
+    "episodes_from_patients_with_multiple_first_aki_episode_admissions": 3667,
+    "primary_48h_episodes": 14599,
+    "unique_patients_in_primary_48h_population": 13896,
+    "patients_with_multiple_primary_48h_episode_admissions": 589
+  },
   "primary": {
     "all_first_aki_episodes": 26567,
     "structural_coverage_censored_before_48h": 11968,
@@ -15,9 +27,11 @@
     "monitoring_indeterminate": {
       "n": 4963,
       "denominator": 14599,
-      "proportion": 0.33995,
-      "ci95_low": 0.33231,
-      "ci95_high": 0.34768
+      "proportion": 0.339955,
+      "cluster_bootstrap_ci95": [
+        0.326502,
+        0.353454
+      ]
     },
     "persistent_identified_set": {
       "lower_definite_persistent": 0.349613,
@@ -29,33 +43,35 @@
     "replicates": 2000,
     "percentile_ci": {
       "persistent_lower": [
-        0.337096,
-        0.362003
+        0.337904,
+        0.361442
       ],
       "persistent_upper": [
-        0.675592,
-        0.702829
+        0.675848,
+        0.702644
       ],
       "identified_set_width": [
-        0.326363,
-        0.353546
+        0.326502,
+        0.353454
       ]
     },
     "simultaneous_bootstrap_confidence_region": {
       "method": "Conservative unstudentized max-deviation percentile bootstrap region",
-      "critical_absolute_probability_deviation": 0.016809,
+      "critical_absolute_probability_deviation": 0.016373,
       "persistent_lower": [
-        0.332804,
-        0.366422
+        0.33324,
+        0.365986
       ],
       "persistent_upper": [
-        0.672759,
-        0.706376
+        0.673195,
+        0.705941
       ]
     },
     "resampling": {
-      "level": "hospital then episodes within hospital",
+      "level": "hospital then unique patient within hospital; all eligible episodes for a sampled patient retained",
       "hospitals": 190,
+      "unique_hospital_patient_clusters": 14039,
+      "unique_patients_global": 13896,
       "episodes": 14599
     }
   },

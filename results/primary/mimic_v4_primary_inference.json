@@ -2,6 +2,18 @@
   "source": "MIMIC-IV v3.1",
   "scope": "v4 ICU-coverage primary phenotype, structural-censoring separation, threshold robustness, and cluster-appropriate partial-identification inference.",
   "denominator_definition": "First AKI episodes with database ICU coverage continuing through first positive creatinine plus 48 h; no subsequent creatinine measurement is required for inclusion.",
+  "population_structure": {
+    "adult_first_continuous_icu_spells": 85122,
+    "unique_patients_in_source_spells": 65269,
+    "patients_with_multiple_source_spells": 11728,
+    "first_aki_episodes": 18001,
+    "unique_patients_with_first_aki_episode": 15808,
+    "patients_with_multiple_first_aki_episode_admissions": 1495,
+    "episodes_from_patients_with_multiple_first_aki_episode_admissions": 3688,
+    "primary_48h_episodes": 10504,
+    "unique_patients_in_primary_48h_population": 9650,
+    "patients_with_multiple_primary_48h_episode_admissions": 671
+  },
   "primary": {
     "all_first_aki_episodes": 18001,
     "structural_coverage_censored_before_48h": 7497,
@@ -15,9 +27,11 @@
     "monitoring_indeterminate": {
       "n": 2623,
       "denominator": 10504,
-      "proportion": 0.24971,
-      "ci95_low": 0.24153,
-      "ci95_high": 0.25808
+      "proportion": 0.249714,
+      "cluster_bootstrap_ci95": [
+        0.241726,
+        0.258215
+      ]
     },
     "persistent_identified_set": {
       "lower_definite_persistent": 0.382902,

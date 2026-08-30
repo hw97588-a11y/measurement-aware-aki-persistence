@@ -1,0 +1,113 @@
+{
+  "source": "MIMIC-IV v3.1",
+  "scope": "v4 ICU-coverage primary phenotype, structural-censoring separation, threshold robustness, and cluster-appropriate partial-identification inference.",
+  "denominator_definition": "First AKI episodes with database ICU coverage continuing through first positive creatinine plus 48 h; no subsequent creatinine measurement is required for inclusion.",
+  "primary": {
+    "all_first_aki_episodes": 18001,
+    "structural_coverage_censored_before_48h": 7497,
+    "primary_48h_icu_coverage_denominator": 10504,
+    "primary_categories": {
+      "definite_transient": 3859,
+      "definite_persistent": 4022,
+      "interval_indeterminate": 1473,
+      "right_censored_unresolved": 1150
+    },
+    "monitoring_indeterminate": {
+      "n": 2623,
+      "denominator": 10504,
+      "proportion": 0.24971,
+      "ci95_low": 0.24153,
+      "ci95_high": 0.25808
+    },
+    "persistent_identified_set": {
+      "lower_definite_persistent": 0.382902,
+      "upper_not_definite_transient": 0.632616,
+      "width_monitoring_indeterminate": 0.249714
+    }
+  },
+  "partial_identification_inference": {
+    "replicates": 2000,
+    "percentile_ci": {
+      "persistent_lower": [
+        0.37353,
+        0.392128
+      ],
+      "persistent_upper": [
+        0.623899,
+        0.641799
+      ],
+      "identified_set_width": [
+        0.241726,
+        0.258215
+      ]
+    },
+    "simultaneous_bootstrap_confidence_region": {
+      "method": "Conservative unstudentized max-deviation percentile bootstrap region",
+      "critical_absolute_probability_deviation": 0.011725,
+      "persistent_lower": [
+        0.371176,
+        0.394627
+      ],
+      "persistent_upper": [
+        0.620891,
+        0.644341
+      ]
+    },
+    "resampling": {
+      "level": "patient/episode cluster",
+      "clusters": 9650,
+      "episodes": 10504
+    }
+  },
+  "threshold_curve": [
+    {
+      "threshold_hours": 24,
+      "episodes_with_potential_coverage": 13920,
+      "persistent_lower": 0.485776,
+      "persistent_upper": 0.854598,
+      "identified_set_width": 0.368822
+    },
+    {
+      "threshold_hours": 36,
+      "episodes_with_potential_coverage": 12370,
+      "persistent_lower": 0.408165,
+      "persistent_upper": 0.737348,
+      "identified_set_width": 0.329184
+    },
+    {
+      "threshold_hours": 48,
+      "episodes_with_potential_coverage": 10504,
+      "persistent_lower": 0.382902,
+      "persistent_upper": 0.632616,
+      "identified_set_width": 0.249714
+    },
+    {
+      "threshold_hours": 72,
+      "episodes_with_potential_coverage": 8124,
+      "persistent_lower": 0.321763,
+      "persistent_upper": 0.515017,
+      "identified_set_width": 0.193255
+    },
+    {
+      "threshold_hours": 96,
+      "episodes_with_potential_coverage": 6501,
+      "persistent_lower": 0.260883,
+      "persistent_upper": 0.454238,
+      "identified_set_width": 0.193355
+    }
+  ],
+  "monitoring_indeterminacy_decomposition": {
+    "counts": {
+      "both_onset_and_recovery_interval_contribute": 319,
+      "no_observed_recovery_right_censored": 1150,
+      "joint_interval_crossing_not_attributable_to_single_margin": 750,
+      "onset_interval_contributes": 127,
+      "recovery_interval_contributes": 277
+    },
+    "interval_indeterminate_episodes": 1473,
+    "onset_interval_width_hours_median": 14.033,
+    "recovery_interval_width_hours_median": 22.717,
+    "note": "Attribution asks whether the 48-h boundary can be crossed by onset or recovery uncertainty while holding the other endpoint at its closest observed bound. Categories may be joint by construction."
+  },
+  "interpretation_constraint": "The identified set and bootstrap region describe classification and sampling uncertainty under the stated observation process. They are not estimates of a latent exact biological duration."
+}

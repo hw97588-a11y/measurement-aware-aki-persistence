@@ -6,6 +6,8 @@ tests, and non-disclosive aggregate outputs supporting the study:
 > Routine creatinine surveillance incompletely identifies acute kidney injury
 > persistence at 48 hours
 
+Repository: https://github.com/hw97588-a11y/measurement-aware-aki-persistence
+
 The analysis evaluates whether irregular routine creatinine measurements allow
 each creatinine-defined acute kidney injury (AKI) episode to be uniquely
 classified as lasting no more than 48 hours or more than 48 hours. Episodes

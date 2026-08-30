@@ -1,0 +1,8 @@
+Characteristic,MIMIC-IV v3.1,SICdb v1.0.8,eICU-CRD v2.0
+Adult first continuous intensive care spells n,85122,27223,165726
+First creatinine-defined AKI episodes n,18001,3867,26567
+Structurally censored before 48-hour intensive care coverage n,7497,1395,11968
+Primary 48-hour observation-opportunity denominator n,10504,2472,14599
+Onset-interval width median hours,14.033,23.767,22.833
+Recovery-interval width among episodes with observed recovery median hours,22.717,24.000,24.067
+Eligible observation-process opportunities with repeat creatinine within 24 hours percent,75.2,70.7,72.8

@@ -1,0 +1,439 @@
+{
+  "scope": "Post-result selection-rule sensitivity within a controlled-thinning experiment; all schedules use the same fixed 9,323-episode observed reference cohort and 500 random global phases.",
+  "rules": {
+    "nearest": "primary: nearest observed value to bin centre",
+    "first": "sensitivity: first observed value in each bin",
+    "last": "sensitivity: last observed value in each bin"
+  },
+  "metrics": {
+    "retained": "AKI phenotype retention",
+    "primary_retained": "retention with potential 48-h coverage",
+    "uncertain": "conditional monitoring-indeterminate proportion",
+    "failure": "fixed-reference total phenotype failure",
+    "rho": "unshrunk hospital failure-rate rank Spearman diagnostic",
+    "quartile_change": "unshrunk hospital failure-rate quartile change diagnostic"
+  },
+  "results": [
+    {
+      "selection_rule": "nearest",
+      "hours": 12,
+      "replicates": 500,
+      "retained": {
+        "median": 0.934356,
+        "p025": 0.928993,
+        "p975": 0.938432
+      },
+      "primary_retained": {
+        "median": 0.910597,
+        "p025": 0.904859,
+        "p975": 0.91655
+      },
+      "uncertain": {
+        "median": 0.295345,
+        "p025": 0.29065,
+        "p975": 0.302593
+      },
+      "failure": {
+        "median": 0.35761,
+        "p025": 0.353693,
+        "p975": 0.36898
+      },
+      "rho": {
+        "median": 0.659108,
+        "p025": 0.60473,
+        "p975": 0.694613
+      },
+      "quartile_change": {
+        "median": 0.528302,
+        "p025": 0.471698,
+        "p975": 0.59434
+      }
+    },
+    {
+      "selection_rule": "nearest",
+      "hours": 24,
+      "replicates": 500,
+      "retained": {
+        "median": 0.832243,
+        "p025": 0.811163,
+        "p975": 0.855897
+      },
+      "primary_retained": {
+        "median": 0.776574,
+        "p025": 0.749759,
+        "p975": 0.81241
+      },
+      "uncertain": {
+        "median": 0.416631,
+        "p025": 0.385015,
+        "p975": 0.440171
+      },
+      "failure": {
+        "median": 0.54859,
+        "p025": 0.50059,
+        "p975": 0.578196
+      },
+      "rho": {
+        "median": 0.174317,
+        "p025": 0.023894,
+        "p975": 0.334888
+      },
+      "quartile_change": {
+        "median": 0.688679,
+        "p025": 0.622642,
+        "p975": 0.754717
+      }
+    },
+    {
+      "selection_rule": "nearest",
+      "hours": 36,
+      "replicates": 500,
+      "retained": {
+        "median": 0.722085,
+        "p025": 0.667811,
+        "p975": 0.753406
+      },
+      "primary_retained": {
+        "median": 0.637617,
+        "p025": 0.579427,
+        "p975": 0.682026
+      },
+      "uncertain": {
+        "median": 0.563898,
+        "p025": 0.560076,
+        "p975": 0.574469
+      },
+      "failure": {
+        "median": 0.721549,
+        "p025": 0.701062,
+        "p975": 0.749386
+      },
+      "rho": {
+        "median": -0.043537,
+        "p025": -0.113692,
+        "p975": 0.038015
+      },
+      "quartile_change": {
+        "median": 0.745283,
+        "p025": 0.679245,
+        "p975": 0.816274
+      }
+    },
+    {
+      "selection_rule": "nearest",
+      "hours": 48,
+      "replicates": 500,
+      "retained": {
+        "median": 0.583074,
+        "p025": 0.505095,
+        "p975": 0.655797
+      },
+      "primary_retained": {
+        "median": 0.490078,
+        "p025": 0.413759,
+        "p975": 0.566934
+      },
+      "uncertain": {
+        "median": 0.567025,
+        "p025": 0.543885,
+        "p975": 0.580933
+      },
+      "failure": {
+        "median": 0.789392,
+        "p025": 0.754636,
+        "p975": 0.821787
+      },
+      "rho": {
+        "median": -0.02908,
+        "p025": -0.18115,
+        "p975": 0.055994
+      },
+      "quartile_change": {
+        "median": 0.735849,
+        "p025": 0.688679,
+        "p975": 0.783019
+      }
+    },
+    {
+      "selection_rule": "first",
+      "hours": 12,
+      "replicates": 500,
+      "retained": {
+        "median": 0.943258,
+        "p025": 0.937466,
+        "p975": 0.948622
+      },
+      "primary_retained": {
+        "median": 0.921592,
+        "p025": 0.913869,
+        "p975": 0.928242
+      },
+      "uncertain": {
+        "median": 0.29774,
+        "p025": 0.295152,
+        "p975": 0.30071
+      },
+      "failure": {
+        "median": 0.353695,
+        "p025": 0.346777,
+        "p975": 0.357825
+      },
+      "rho": {
+        "median": 0.691817,
+        "p025": 0.58529,
+        "p975": 0.737997
+      },
+      "quartile_change": {
+        "median": 0.490566,
+        "p025": 0.443396,
+        "p975": 0.556604
+      }
+    },
+    {
+      "selection_rule": "first",
+      "hours": 24,
+      "replicates": 500,
+      "retained": {
+        "median": 0.85332,
+        "p025": 0.836263,
+        "p975": 0.883943
+      },
+      "primary_retained": {
+        "median": 0.809128,
+        "p025": 0.777647,
+        "p975": 0.840344
+      },
+      "uncertain": {
+        "median": 0.419891,
+        "p025": 0.396679,
+        "p975": 0.454772
+      },
+      "failure": {
+        "median": 0.528103,
+        "p025": 0.49512,
+        "p975": 0.57578
+      },
+      "rho": {
+        "median": 0.180345,
+        "p025": -0.013255,
+        "p975": 0.293282
+      },
+      "quartile_change": {
+        "median": 0.716981,
+        "p025": 0.650943,
+        "p975": 0.783019
+      }
+    },
+    {
+      "selection_rule": "first",
+      "hours": 36,
+      "replicates": 500,
+      "retained": {
+        "median": 0.751636,
+        "p025": 0.717258,
+        "p975": 0.773678
+      },
+      "primary_retained": {
+        "median": 0.683739,
+        "p025": 0.635418,
+        "p975": 0.718387
+      },
+      "uncertain": {
+        "median": 0.576882,
+        "p025": 0.541942,
+        "p975": 0.599629
+      },
+      "failure": {
+        "median": 0.716615,
+        "p025": 0.675212,
+        "p975": 0.730452
+      },
+      "rho": {
+        "median": -0.029309,
+        "p025": -0.093489,
+        "p975": 0.070028
+      },
+      "quartile_change": {
+        "median": 0.754717,
+        "p025": 0.707547,
+        "p975": 0.792453
+      }
+    },
+    {
+      "selection_rule": "first",
+      "hours": 48,
+      "replicates": 500,
+      "retained": {
+        "median": 0.636008,
+        "p025": 0.534587,
+        "p975": 0.677306
+      },
+      "primary_retained": {
+        "median": 0.563713,
+        "p025": 0.45366,
+        "p975": 0.624906
+      },
+      "uncertain": {
+        "median": 0.586246,
+        "p025": 0.557983,
+        "p975": 0.599276
+      },
+      "failure": {
+        "median": 0.769817,
+        "p025": 0.740641,
+        "p975": 0.799528
+      },
+      "rho": {
+        "median": -0.048842,
+        "p025": -0.175597,
+        "p975": 0.090622
+      },
+      "quartile_change": {
+        "median": 0.745283,
+        "p025": 0.683726,
+        "p975": 0.801887
+      }
+    },
+    {
+      "selection_rule": "last",
+      "hours": 12,
+      "replicates": 500,
+      "retained": {
+        "median": 0.922664,
+        "p025": 0.918803,
+        "p975": 0.927169
+      },
+      "primary_retained": {
+        "median": 0.896171,
+        "p025": 0.891773,
+        "p975": 0.901105
+      },
+      "uncertain": {
+        "median": 0.295185,
+        "p025": 0.290268,
+        "p975": 0.29809
+      },
+      "failure": {
+        "median": 0.368122,
+        "p025": 0.361579,
+        "p975": 0.373485
+      },
+      "rho": {
+        "median": 0.625721,
+        "p025": 0.533474,
+        "p975": 0.697957
+      },
+      "quartile_change": {
+        "median": 0.556604,
+        "p025": 0.509434,
+        "p975": 0.622642
+      }
+    },
+    {
+      "selection_rule": "last",
+      "hours": 24,
+      "replicates": 500,
+      "retained": {
+        "median": 0.80103,
+        "p025": 0.765419,
+        "p975": 0.836748
+      },
+      "primary_retained": {
+        "median": 0.739086,
+        "p025": 0.698809,
+        "p975": 0.779363
+      },
+      "uncertain": {
+        "median": 0.409444,
+        "p025": 0.389755,
+        "p975": 0.418023
+      },
+      "failure": {
+        "median": 0.565376,
+        "p025": 0.524668,
+        "p975": 0.590797
+      },
+      "rho": {
+        "median": 0.161272,
+        "p025": 0.073594,
+        "p975": 0.315224
+      },
+      "quartile_change": {
+        "median": 0.679245,
+        "p025": 0.632075,
+        "p975": 0.735849
+      }
+    },
+    {
+      "selection_rule": "last",
+      "hours": 36,
+      "replicates": 500,
+      "retained": {
+        "median": 0.657085,
+        "p025": 0.607423,
+        "p975": 0.714419
+      },
+      "primary_retained": {
+        "median": 0.558619,
+        "p025": 0.503486,
+        "p975": 0.621688
+      },
+      "uncertain": {
+        "median": 0.551011,
+        "p025": 0.540328,
+        "p975": 0.556227
+      },
+      "failure": {
+        "median": 0.750188,
+        "p025": 0.716186,
+        "p975": 0.773893
+      },
+      "rho": {
+        "median": -0.038732,
+        "p025": -0.087067,
+        "p975": 0.039234
+      },
+      "quartile_change": {
+        "median": 0.740566,
+        "p025": 0.669811,
+        "p975": 0.820755
+      }
+    },
+    {
+      "selection_rule": "last",
+      "hours": 48,
+      "replicates": 500,
+      "retained": {
+        "median": 0.493725,
+        "p025": 0.44819,
+        "p975": 0.600829
+      },
+      "primary_retained": {
+        "median": 0.385927,
+        "p025": 0.336909,
+        "p975": 0.486646
+      },
+      "uncertain": {
+        "median": 0.540135,
+        "p025": 0.522411,
+        "p975": 0.576231
+      },
+      "failure": {
+        "median": 0.821088,
+        "p025": 0.77046,
+        "p975": 0.855626
+      },
+      "rho": {
+        "median": -0.074972,
+        "p025": -0.149535,
+        "p975": 0.031692
+      },
+      "quartile_change": {
+        "median": 0.735849,
+        "p025": 0.688679,
+        "p975": 0.783019
+      }
+    }
+  ],
+  "constraint": "This does not establish an optimal monitoring schedule or a hospital-quality rank."
+}

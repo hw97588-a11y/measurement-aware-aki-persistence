@@ -14,6 +14,6 @@ agreements.
 
 The active version-control record is available at
 https://github.com/hw97588-a11y/measurement-aware-aki-persistence. The corrected
-submission freeze is version 1.1.0. Deposit-ready Zenodo metadata is provided
-in `.zenodo.json`; the authors must create the archive and then add its DOI here,
-to `CITATION.cff`, and to the manuscript before journal submission.
+submission freeze is version 1.1.0. The permanent Zenodo archive is available
+at https://doi.org/10.5281/zenodo.22178599. The DOI is also recorded in
+`README.md` and `CITATION.cff`.

@@ -8,6 +8,8 @@ tests, and non-disclosive aggregate outputs supporting the study:
 
 Repository: https://github.com/hw97588-a11y/measurement-aware-aki-persistence
 
+Archived release: https://doi.org/10.5281/zenodo.22178599
+
 The analysis evaluates whether irregular routine creatinine measurements allow
 each creatinine-defined acute kidney injury (AKI) episode to be uniquely
 classified as lasting no more than 48 hours or more than 48 hours. Episodes
@@ -160,5 +162,5 @@ Cheng Shen, Bohao Xue, and Jin Li. Correspondence: Jin Li,
 
 Code is released under the MIT License. Please cite this repository using
 `CITATION.cff` and cite all three source datasets under their exact versions
-and persistent identifiers. `.zenodo.json` contains deposit-ready metadata;
-the DOI field will be added after the authors create the Zenodo archive.
+and persistent identifiers. The frozen v1.1.0 archive is available at
+https://doi.org/10.5281/zenodo.22178599.

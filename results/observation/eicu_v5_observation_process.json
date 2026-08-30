@@ -1,0 +1,73 @@
+{
+  "source": "eICU-CRD v2.0",
+  "scope": "ICU-only recurrent observation process; patient-clustered GEE; no IPW and no causal monitoring effect.",
+  "opportunities": 316917,
+  "unique_patients": 75202,
+  "continuous_icu_spells": 85451,
+  "crude_next_test_within_24h": {
+    "no": {
+      "opportunities": 256380,
+      "proportion": 0.715138
+    },
+    "yes": {
+      "opportunities": 60537,
+      "proportion": 0.779936
+    }
+  },
+  "patient_clustered_gee": {
+    "formula": "next_test_24h ~ last_creatinine_z + delta_creatinine_z + C(current_aki) + C(icu_day)",
+    "working_correlation": "independence",
+    "effects": [
+      {
+        "term": "Last creatinine, per source SD",
+        "odds_ratio": 1.088506,
+        "ci95_low": 1.073834,
+        "ci95_high": 1.103378,
+        "p_value": 0.0
+      },
+      {
+        "term": "Change from preceding creatinine, per source SD",
+        "odds_ratio": 0.962823,
+        "ci95_low": 0.952376,
+        "ci95_high": 0.973384,
+        "p_value": 0.0
+      },
+      {
+        "term": "Current creatinine is AKI-positive versus not AKI-positive",
+        "odds_ratio": 1.405294,
+        "ci95_low": 1.362454,
+        "ci95_high": 1.449481,
+        "p_value": 0.0
+      },
+      {
+        "term": "ICU day 1 versus day 0",
+        "odds_ratio": 0.6649,
+        "ci95_low": 0.650348,
+        "ci95_high": 0.679777,
+        "p_value": 0.0
+      },
+      {
+        "term": "ICU day 2 versus day 0",
+        "odds_ratio": 0.589293,
+        "ci95_low": 0.574469,
+        "ci95_high": 0.6045,
+        "p_value": 0.0
+      },
+      {
+        "term": "ICU day 3-7 versus day 0",
+        "odds_ratio": 0.631505,
+        "ci95_low": 0.616322,
+        "ci95_high": 0.647061,
+        "p_value": 0.0
+      }
+    ]
+  },
+  "standardized_retest_probability": {
+    "if_current_creatinine_aki_positive": 0.778778,
+    "if_current_creatinine_not_aki_positive": 0.715442,
+    "risk_difference": 0.063336,
+    "risk_ratio": 1.088527,
+    "method": "Marginal standardization over the observed covariate distribution; point estimates are descriptive."
+  },
+  "interpretation": "Repeat testing was associated with already observed creatinine history. The model cannot reconstruct unmeasured onset or recovery and was not used to correct the primary persistence bounds."
+}

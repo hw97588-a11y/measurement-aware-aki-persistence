@@ -1,0 +1,139 @@
+{
+  "source": "SICdb v1.0.8",
+  "scope": "Corrected v5 ICU-only core robustness; mortality, IPW and hospital ranking excluded.",
+  "flow": {
+    "adult_first_continuous_icu_spells": 27223,
+    "unique_patients_in_source_spells": 21442,
+    "excluded_no_valid_central_creatinine": 917,
+    "excluded_only_one_valid_central_creatinine": 3184,
+    "excluded_at_least_two_measurements_but_no_observed_qualifying_nonaki_to_aki_transition": 19255,
+    "first_observed_transition_defined_aki_episodes": 3867,
+    "unique_patients_with_episode": 3572,
+    "excluded_structural_icu_coverage_end_before_48h": 1395,
+    "primary_48h_potential_icu_coverage_episodes": 2472,
+    "unique_patients_in_primary_population": 2350,
+    "interpretation": "The source cohort is restricted to first observed transition-defined creatinine AKI, not all prevalent or biological AKI."
+  },
+  "recovery_definition_sensitivity": {
+    "first_recovery_primary": {
+      "episodes": 2472,
+      "unique_patients": 2350,
+      "categories": {
+        "definite_transient": 652,
+        "definite_persistent": 925,
+        "interval_indeterminate": 605,
+        "right_censored_unresolved": 290
+      },
+      "classification_indeterminate": {
+        "n": 895,
+        "proportion": 0.362055,
+        "cluster_bootstrap_ci95": [
+          0.342798,
+          0.380551
+        ]
+      },
+      "persistent_identified_set": {
+        "lower_definite_persistent": 0.374191,
+        "upper_definite_persistent_plus_indeterminate": 0.736246,
+        "width": 0.362055
+      }
+    },
+    "two_observed_recoveries_at_least_6h_apart": {
+      "episodes": 2472,
+      "unique_patients": 2350,
+      "categories": {
+        "definite_transient": 546,
+        "definite_persistent": 1023,
+        "interval_indeterminate": 445,
+        "right_censored_unresolved": 458
+      },
+      "classification_indeterminate": {
+        "n": 903,
+        "proportion": 0.365291,
+        "cluster_bootstrap_ci95": [
+          0.345901,
+          0.383657
+        ]
+      },
+      "persistent_identified_set": {
+        "lower_definite_persistent": 0.413835,
+        "upper_definite_persistent_plus_indeterminate": 0.779126,
+        "width": 0.365291
+      }
+    },
+    "recovery_confirmed_24to48h_without_intervening_relapse": {
+      "episodes": 2472,
+      "unique_patients": 2350,
+      "categories": {
+        "definite_transient": 480,
+        "definite_persistent": 1047,
+        "interval_indeterminate": 409,
+        "right_censored_unresolved": 536
+      },
+      "classification_indeterminate": {
+        "n": 945,
+        "proportion": 0.382282,
+        "cluster_bootstrap_ci95": [
+          0.363119,
+          0.401221
+        ]
+      },
+      "persistent_identified_set": {
+        "lower_definite_persistent": 0.423544,
+        "upper_definite_persistent_plus_indeterminate": 0.805825,
+        "width": 0.382282
+      }
+    }
+  },
+  "strict_icu_acquired_aki": {
+    "episodes": 588,
+    "unique_patients": 577,
+    "categories": {
+      "definite_transient": 94,
+      "definite_persistent": 190,
+      "interval_indeterminate": 141,
+      "right_censored_unresolved": 163
+    },
+    "classification_indeterminate": {
+      "n": 304,
+      "proportion": 0.517007,
+      "cluster_bootstrap_ci95": [
+        0.477889,
+        0.556876
+      ]
+    },
+    "persistent_identified_set": {
+      "lower_definite_persistent": 0.323129,
+      "upper_definite_persistent_plus_indeterminate": 0.840136,
+      "width": 0.517007
+    }
+  },
+  "preicu_measured_baseline_sensitivity": {
+    "spells_with_preicu_measured_baseline": 9049,
+    "summary": {
+      "episodes": 790,
+      "unique_patients": 768,
+      "categories": {
+        "definite_transient": 213,
+        "definite_persistent": 308,
+        "interval_indeterminate": 188,
+        "right_censored_unresolved": 81
+      },
+      "classification_indeterminate": {
+        "n": 269,
+        "proportion": 0.340506,
+        "cluster_bootstrap_ci95": [
+          0.306818,
+          0.375482
+        ]
+      },
+      "persistent_identified_set": {
+        "lower_definite_persistent": 0.389873,
+        "upper_definite_persistent_plus_indeterminate": 0.73038,
+        "width": 0.340506
+      }
+    },
+    "shared_primary_episodes": 756,
+    "category_concordance_among_shared_primary_episodes": 0.843915
+  }
+}

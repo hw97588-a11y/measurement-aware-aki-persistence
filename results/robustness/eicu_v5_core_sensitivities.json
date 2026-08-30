@@ -1,0 +1,197 @@
+{
+  "source": "eICU-CRD v2.0",
+  "scope": "Corrected v5 ICU-only core robustness; mortality, IPW and hospital ranking excluded.",
+  "flow": {
+    "adult_first_continuous_icu_spells": 165726,
+    "unique_patients_in_source_spells": 138811,
+    "excluded_no_valid_central_creatinine": 4915,
+    "excluded_only_one_valid_central_creatinine": 22272,
+    "excluded_at_least_two_measurements_but_no_observed_qualifying_nonaki_to_aki_transition": 111972,
+    "first_observed_transition_defined_aki_episodes": 26567,
+    "unique_patients_with_episode": 24498,
+    "excluded_structural_icu_coverage_end_before_48h": 11968,
+    "primary_48h_potential_icu_coverage_episodes": 14599,
+    "unique_patients_in_primary_population": 13896,
+    "interpretation": "The source cohort is restricted to first observed transition-defined creatinine AKI, not all prevalent or biological AKI."
+  },
+  "recovery_definition_sensitivity": {
+    "first_recovery_primary": {
+      "episodes": 14599,
+      "unique_patients": 13896,
+      "categories": {
+        "definite_transient": 4532,
+        "definite_persistent": 5104,
+        "interval_indeterminate": 3334,
+        "right_censored_unresolved": 1629
+      },
+      "classification_indeterminate": {
+        "n": 4963,
+        "proportion": 0.339955,
+        "cluster_bootstrap_ci95": [
+          0.326502,
+          0.353454
+        ]
+      },
+      "persistent_identified_set": {
+        "lower_definite_persistent": 0.349613,
+        "upper_definite_persistent_plus_indeterminate": 0.689568,
+        "width": 0.339955
+      }
+    },
+    "two_observed_recoveries_at_least_6h_apart": {
+      "episodes": 14599,
+      "unique_patients": 13896,
+      "categories": {
+        "definite_transient": 3535,
+        "definite_persistent": 6136,
+        "interval_indeterminate": 2205,
+        "right_censored_unresolved": 2723
+      },
+      "classification_indeterminate": {
+        "n": 4928,
+        "proportion": 0.337557,
+        "cluster_bootstrap_ci95": [
+          0.3254,
+          0.350576
+        ]
+      },
+      "persistent_identified_set": {
+        "lower_definite_persistent": 0.420303,
+        "upper_definite_persistent_plus_indeterminate": 0.75786,
+        "width": 0.337557
+      }
+    },
+    "recovery_confirmed_24to48h_without_intervening_relapse": {
+      "episodes": 14599,
+      "unique_patients": 13896,
+      "categories": {
+        "definite_transient": 2832,
+        "definite_persistent": 6426,
+        "interval_indeterminate": 1789,
+        "right_censored_unresolved": 3552
+      },
+      "classification_indeterminate": {
+        "n": 5341,
+        "proportion": 0.365847,
+        "cluster_bootstrap_ci95": [
+          0.353354,
+          0.379987
+        ]
+      },
+      "persistent_identified_set": {
+        "lower_definite_persistent": 0.440167,
+        "upper_definite_persistent_plus_indeterminate": 0.806014,
+        "width": 0.365847
+      }
+    }
+  },
+  "strict_icu_acquired_aki": {
+    "episodes": 3062,
+    "unique_patients": 3025,
+    "categories": {
+      "definite_transient": 711,
+      "definite_persistent": 932,
+      "interval_indeterminate": 689,
+      "right_censored_unresolved": 730
+    },
+    "classification_indeterminate": {
+      "n": 1419,
+      "proportion": 0.463423,
+      "cluster_bootstrap_ci95": [
+        0.440829,
+        0.487271
+      ]
+    },
+    "persistent_identified_set": {
+      "lower_definite_persistent": 0.304376,
+      "upper_definite_persistent_plus_indeterminate": 0.767799,
+      "width": 0.463423
+    }
+  },
+  "controlled_thinning_reference_comparison": {
+    "full_eicu_primary_cohort": {
+      "episodes": 14599,
+      "unique_patients": 13896,
+      "initial_aki_stage": {
+        "1": 11213,
+        "2": 893,
+        "3": 2493
+      },
+      "baseline_creatinine_mg_dl": {
+        "median": 1.23,
+        "p25": 0.8,
+        "p75": 2.275
+      },
+      "onset_icu_day": {
+        "median": 0.98,
+        "p25": 0.423,
+        "p75": 1.905
+      },
+      "creatinine_measurements_onset_to_72h": {
+        "median": 4.0,
+        "p25": 3.0,
+        "p75": 5.0
+      },
+      "icu_observation_duration_hours": {
+        "median": 151.683,
+        "p25": 99.675,
+        "p75": 251.058
+      },
+      "admission_source_top10": {
+        "Emergency Department": 6731,
+        "Floor": 2356,
+        "Operating Room": 2347,
+        "Direct Admit": 1122,
+        "Other Hospital": 516,
+        "Recovery Room": 440,
+        "Acute Care/Floor": 437,
+        "Step-Down Unit (SDU)": 400,
+        "PACU": 93,
+        "Other ICU": 88
+      }
+    },
+    "measurement_rich_thinning_reference_cohort": {
+      "episodes": 9323,
+      "unique_patients": 9082,
+      "initial_aki_stage": {
+        "1": 7251,
+        "2": 571,
+        "3": 1501
+      },
+      "baseline_creatinine_mg_dl": {
+        "median": 1.27,
+        "p25": 0.82,
+        "p75": 2.25
+      },
+      "onset_icu_day": {
+        "median": 0.771,
+        "p25": 0.359,
+        "p75": 1.582
+      },
+      "creatinine_measurements_onset_to_72h": {
+        "median": 5.0,
+        "p25": 4.0,
+        "p75": 6.0
+      },
+      "icu_observation_duration_hours": {
+        "median": 163.883,
+        "p25": 110.667,
+        "p75": 264.7
+      },
+      "admission_source_top10": {
+        "Emergency Department": 4283,
+        "Operating Room": 1589,
+        "Floor": 1422,
+        "Direct Admit": 736,
+        "Other Hospital": 350,
+        "Step-Down Unit (SDU)": 268,
+        "Recovery Room": 265,
+        "Acute Care/Floor": 256,
+        "PACU": 56,
+        "Other ICU": 54
+      }
+    },
+    "selection_fraction": 0.638605,
+    "constraint": "Controlled-thinning results apply to this fixed measurement-rich reference cohort and are not population failure-rate estimates."
+  }
+}

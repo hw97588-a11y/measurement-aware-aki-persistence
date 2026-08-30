@@ -1,0 +1,252 @@
+{
+  "source": "MIMIC-IV v3.1",
+  "scope": "Corrected v5 ICU-only core robustness; mortality, IPW and hospital ranking excluded.",
+  "flow": {
+    "adult_first_continuous_icu_spells": 85122,
+    "unique_patients_in_source_spells": 65269,
+    "excluded_no_valid_central_creatinine": 1865,
+    "excluded_only_one_valid_central_creatinine": 10658,
+    "excluded_at_least_two_measurements_but_no_observed_qualifying_nonaki_to_aki_transition": 54598,
+    "first_observed_transition_defined_aki_episodes": 18001,
+    "unique_patients_with_episode": 15808,
+    "excluded_structural_icu_coverage_end_before_48h": 7497,
+    "primary_48h_potential_icu_coverage_episodes": 10504,
+    "unique_patients_in_primary_population": 9650,
+    "interpretation": "The source cohort is restricted to first observed transition-defined creatinine AKI, not all prevalent or biological AKI."
+  },
+  "recovery_definition_sensitivity": {
+    "first_recovery_primary": {
+      "episodes": 10504,
+      "unique_patients": 9650,
+      "categories": {
+        "definite_transient": 3859,
+        "definite_persistent": 4022,
+        "interval_indeterminate": 1473,
+        "right_censored_unresolved": 1150
+      },
+      "classification_indeterminate": {
+        "n": 2623,
+        "proportion": 0.249714,
+        "cluster_bootstrap_ci95": [
+          0.241726,
+          0.258215
+        ]
+      },
+      "persistent_identified_set": {
+        "lower_definite_persistent": 0.382902,
+        "upper_definite_persistent_plus_indeterminate": 0.632616,
+        "width": 0.249714
+      }
+    },
+    "two_observed_recoveries_at_least_6h_apart": {
+      "episodes": 10504,
+      "unique_patients": 9650,
+      "categories": {
+        "definite_transient": 2942,
+        "definite_persistent": 4773,
+        "interval_indeterminate": 1042,
+        "right_censored_unresolved": 1747
+      },
+      "classification_indeterminate": {
+        "n": 2789,
+        "proportion": 0.265518,
+        "cluster_bootstrap_ci95": [
+          0.257308,
+          0.274672
+        ]
+      },
+      "persistent_identified_set": {
+        "lower_definite_persistent": 0.454398,
+        "upper_definite_persistent_plus_indeterminate": 0.719916,
+        "width": 0.265518
+      }
+    },
+    "recovery_confirmed_24to48h_without_intervening_relapse": {
+      "episodes": 10504,
+      "unique_patients": 9650,
+      "categories": {
+        "definite_transient": 2410,
+        "definite_persistent": 5051,
+        "interval_indeterminate": 780,
+        "right_censored_unresolved": 2263
+      },
+      "classification_indeterminate": {
+        "n": 3043,
+        "proportion": 0.289699,
+        "cluster_bootstrap_ci95": [
+          0.280767,
+          0.298553
+        ]
+      },
+      "persistent_identified_set": {
+        "lower_definite_persistent": 0.480864,
+        "upper_definite_persistent_plus_indeterminate": 0.770564,
+        "width": 0.289699
+      }
+    }
+  },
+  "strict_icu_acquired_aki": {
+    "episodes": 2485,
+    "unique_patients": 2432,
+    "categories": {
+      "definite_transient": 863,
+      "definite_persistent": 730,
+      "interval_indeterminate": 344,
+      "right_censored_unresolved": 548
+    },
+    "classification_indeterminate": {
+      "n": 892,
+      "proportion": 0.358954,
+      "cluster_bootstrap_ci95": [
+        0.34004,
+        0.376572
+      ]
+    },
+    "persistent_identified_set": {
+      "lower_definite_persistent": 0.293763,
+      "upper_definite_persistent_plus_indeterminate": 0.652716,
+      "width": 0.358954
+    }
+  },
+  "baseline_creatinine_sensitivity": {
+    "source": "MIMIC-IV v3.1",
+    "strategies": [
+      {
+        "strategy": "measured_preadmission_7to365d_median",
+        "spells_with_strategy_baseline": 42566,
+        "summary": {
+          "episodes": 2890,
+          "unique_patients": 2706,
+          "categories": {
+            "definite_transient": 1081,
+            "definite_persistent": 1076,
+            "interval_indeterminate": 438,
+            "right_censored_unresolved": 295
+          },
+          "classification_indeterminate": {
+            "n": 733,
+            "proportion": 0.253633,
+            "cluster_bootstrap_ci95": [
+              0.238104,
+              0.270111
+            ]
+          },
+          "persistent_identified_set": {
+            "lower_definite_persistent": 0.372318,
+            "upper_definite_persistent_plus_indeterminate": 0.625952,
+            "width": 0.253633
+          }
+        },
+        "shared_primary_episodes": 2416,
+        "category_concordance_among_shared_primary_episodes": 0.711507
+      },
+      {
+        "strategy": "first_24h_minimum",
+        "spells_with_strategy_baseline": 82475,
+        "summary": {
+          "episodes": 9245,
+          "unique_patients": 8570,
+          "categories": {
+            "definite_transient": 3623,
+            "definite_persistent": 3575,
+            "interval_indeterminate": 1230,
+            "right_censored_unresolved": 817
+          },
+          "classification_indeterminate": {
+            "n": 2047,
+            "proportion": 0.221417,
+            "cluster_bootstrap_ci95": [
+              0.21324,
+              0.229887
+            ]
+          },
+          "persistent_identified_set": {
+            "lower_definite_persistent": 0.386696,
+            "upper_definite_persistent_plus_indeterminate": 0.608112,
+            "width": 0.221417
+          }
+        },
+        "shared_primary_episodes": 8535,
+        "category_concordance_among_shared_primary_episodes": 0.906737
+      },
+      {
+        "strategy": "first_48h_minimum",
+        "spells_with_strategy_baseline": 83576,
+        "summary": {
+          "episodes": 10127,
+          "unique_patients": 9361,
+          "categories": {
+            "definite_transient": 4018,
+            "definite_persistent": 3781,
+            "interval_indeterminate": 1429,
+            "right_censored_unresolved": 899
+          },
+          "classification_indeterminate": {
+            "n": 2328,
+            "proportion": 0.229881,
+            "cluster_bootstrap_ci95": [
+              0.221748,
+              0.238403
+            ]
+          },
+          "persistent_identified_set": {
+            "lower_definite_persistent": 0.373358,
+            "upper_definite_persistent_plus_indeterminate": 0.603239,
+            "width": 0.229881
+          }
+        },
+        "shared_primary_episodes": 8929,
+        "category_concordance_among_shared_primary_episodes": 0.901669
+      }
+    ]
+  },
+  "observation_window_sensitivity": {
+    "icu_only": {
+      "episodes": 10504,
+      "unique_patients": 9650,
+      "categories": {
+        "definite_transient": 3859,
+        "definite_persistent": 4022,
+        "interval_indeterminate": 1473,
+        "right_censored_unresolved": 1150
+      },
+      "classification_indeterminate": {
+        "n": 2623,
+        "proportion": 0.249714,
+        "cluster_bootstrap_ci95": [
+          0.241647,
+          0.257746
+        ]
+      },
+      "persistent_identified_set": {
+        "lower_definite_persistent": 0.382902,
+        "upper_definite_persistent_plus_indeterminate": 0.632616,
+        "width": 0.249714
+      }
+    },
+    "hospital_wide": {
+      "episodes": 21841,
+      "unique_patients": 18622,
+      "categories": {
+        "definite_transient": 7341,
+        "definite_persistent": 7644,
+        "interval_indeterminate": 4466,
+        "right_censored_unresolved": 2390
+      },
+      "classification_indeterminate": {
+        "n": 6856,
+        "proportion": 0.313905,
+        "cluster_bootstrap_ci95": [
+          0.307706,
+          0.320317
+        ]
+      },
+      "persistent_identified_set": {
+        "lower_definite_persistent": 0.349984,
+        "upper_definite_persistent_plus_indeterminate": 0.663889,
+        "width": 0.313905
+      }
+    },
+    "note": "ICU-only is the cross-database primary scope; hospital-wide MIMIC ascertainment is a source-specific sensitivity analysis."
+  }
+}

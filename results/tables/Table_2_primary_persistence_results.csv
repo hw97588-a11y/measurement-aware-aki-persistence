@@ -8,14 +8,10 @@ Interval-indeterminate n,1473,605,3334
 Interval-indeterminate percent,14.0,24.5,22.8
 Right-censored unresolved n,1150,290,1629
 Right-censored unresolved percent,10.9,11.7,11.2
-All classification-indeterminate n,2623,895,4963
-All classification-indeterminate percent,25.0,36.2,34.0
-All classification-indeterminate CI low percent,24.2,34.3,33.2
-All classification-indeterminate CI high percent,25.8,38.1,34.8
-Persistent-AKI prevalence lower bound percent,38.3,37.4,35.0
-Persistent-AKI prevalence upper bound percent,63.3,73.6,69.0
-Identified-set width bootstrap CI low percent,24.2,34.3,32.6
-Identified-set width bootstrap CI high percent,25.8,38.1,35.4
+Classification-indeterminate / identified-set width n,2623,895,4963
+Classification-indeterminate / identified-set width percent (cluster-bootstrap 95% CI),25.0 (24.2–25.8),36.2 (34.3–38.1),34.0 (32.7–35.3)
+Prevalence of persistent AKI lower bound percent,38.3,37.4,35.0
+Prevalence of persistent AKI upper bound percent,63.3,73.6,69.0
 Simultaneous region lower endpoint low percent,37.1,35.1,33.3
 Simultaneous region lower endpoint high percent,39.5,39.7,36.6
 Simultaneous region upper endpoint low percent,62.1,71.3,67.3

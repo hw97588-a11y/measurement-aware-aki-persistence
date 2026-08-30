@@ -1,0 +1,79 @@
+{
+  "source": "SICdb v1.0.8",
+  "analysis_status": "Additional post hoc methodological robustness analysis; frozen v4 primary results unchanged.",
+  "primary_convention": "The indexed episode is considered ongoing until the first observed recovery meeting the fixed episode-ending rule.",
+  "sensitivity_interpretation": "A long gap does not prove recovery; it removes continuity support for the definite-persistent lower bound under the selected maximum-gap rule.",
+  "primary_48h_icu_coverage_denominator": 2472,
+  "original_categories": {
+    "right_censored_unresolved": 290,
+    "definite_transient": 652,
+    "interval_indeterminate": 605,
+    "definite_persistent": 925
+  },
+  "original_persistent_identified_set": {
+    "lower_definite_persistent": 0.374191,
+    "upper_not_definite_transient": 0.736246,
+    "width": 0.362055
+  },
+  "definite_persistent_chain_diagnostics": {
+    "episodes": 925,
+    "observed_state_measurements_median": 5.0,
+    "observed_state_measurements_p25_p75": [
+      4.0,
+      6.0
+    ],
+    "maximum_adjacent_gap_hours_median": 24.283,
+    "maximum_adjacent_gap_hours_p25_p75": [
+      24.067,
+      24.5
+    ],
+    "maximum_adjacent_gap_hours_p90": 25.0
+  },
+  "sensitivity_results": {
+    "max_adjacent_gap_24h": {
+      "continuity_supported_definite_persistent": 165,
+      "continuity_gap_indeterminate": {
+        "n": 760,
+        "denominator": 2472,
+        "proportion": 0.30744,
+        "ci95_low": 0.28956,
+        "ci95_high": 0.32592
+      },
+      "total_classification_indeterminate_after_reclassification": {
+        "n": 1655,
+        "denominator": 2472,
+        "proportion": 0.6695,
+        "ci95_low": 0.6507,
+        "ci95_high": 0.68777
+      },
+      "persistent_identified_set": {
+        "lower_continuity_supported_persistent": 0.066748,
+        "upper_not_definite_transient_unchanged": 0.736246,
+        "width": 0.669498
+      }
+    },
+    "max_adjacent_gap_36h": {
+      "continuity_supported_definite_persistent": 891,
+      "continuity_gap_indeterminate": {
+        "n": 34,
+        "denominator": 2472,
+        "proportion": 0.01375,
+        "ci95_low": 0.00986,
+        "ci95_high": 0.01916
+      },
+      "total_classification_indeterminate_after_reclassification": {
+        "n": 929,
+        "denominator": 2472,
+        "proportion": 0.37581,
+        "ci95_low": 0.35692,
+        "ci95_high": 0.39508
+      },
+      "persistent_identified_set": {
+        "lower_continuity_supported_persistent": 0.360437,
+        "upper_not_definite_transient_unchanged": 0.736246,
+        "width": 0.375809
+      }
+    }
+  },
+  "methods_note": "All originally definite-transient, interval-indeterminate and right-censored-unresolved classifications remain unchanged. Only originally definite-persistent episodes can be reclassified."
+}

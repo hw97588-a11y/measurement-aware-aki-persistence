@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite this software and the associated article."
+title: "Measurement-aware identification of 48-hour acute kidney injury persistence"
+type: software
+authors:
+  - family-names: Shen
+    given-names: Cheng
+  - family-names: Xue
+    given-names: Bohao
+  - family-names: Li
+    given-names: Jin
+    orcid: "https://orcid.org/0000-0002-6161-129X"
+version: 1.0.0
+date-released: 2026-08-30
+license: MIT
+keywords:
+  - acute kidney injury
+  - creatinine
+  - interval censoring
+  - partial identification
+  - electronic health records

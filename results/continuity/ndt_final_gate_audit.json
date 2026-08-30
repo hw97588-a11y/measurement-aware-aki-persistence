@@ -1,0 +1,255 @@
+{
+  "audit_status": "PASS",
+  "date": "2026-08-30",
+  "checks_passed": 16,
+  "checks": [
+    {
+      "check": "mimic: denominator reconciles to frozen v4",
+      "passed": true
+    },
+    {
+      "check": "mimic: category counts reconcile to frozen v4",
+      "passed": true
+    },
+    {
+      "check": "mimic: original lower bound reconciles to frozen v4",
+      "passed": true
+    },
+    {
+      "check": "mimic: original upper bound reconciles to frozen v4",
+      "passed": true
+    },
+    {
+      "check": "sicdb: denominator reconciles to frozen v4",
+      "passed": true
+    },
+    {
+      "check": "sicdb: category counts reconcile to frozen v4",
+      "passed": true
+    },
+    {
+      "check": "sicdb: original lower bound reconciles to frozen v4",
+      "passed": true
+    },
+    {
+      "check": "sicdb: original upper bound reconciles to frozen v4",
+      "passed": true
+    },
+    {
+      "check": "eicu: denominator reconciles to frozen v4",
+      "passed": true
+    },
+    {
+      "check": "eicu: category counts reconcile to frozen v4",
+      "passed": true
+    },
+    {
+      "check": "eicu: original lower bound reconciles to frozen v4",
+      "passed": true
+    },
+    {
+      "check": "eicu: original upper bound reconciles to frozen v4",
+      "passed": true
+    },
+    {
+      "check": "controlled thinning uses one fixed episode denominator across schedules",
+      "passed": true
+    },
+    {
+      "check": "controlled thinning uses one fixed hospital set across schedules",
+      "passed": true
+    },
+    {
+      "check": "all thinning schedules use 500 random phases",
+      "passed": true
+    },
+    {
+      "check": "all thinning schedules select nearest observation without imputation",
+      "passed": true
+    }
+  ],
+  "continuity_sensitivity_summary": {
+    "mimic": {
+      "denominator": 10504,
+      "original_indeterminate": 0.24971,
+      "original_bounds": [
+        0.382902,
+        0.632616
+      ],
+      "continuity_24h": {
+        "continuity_supported_definite_persistent": 2474,
+        "continuity_gap_indeterminate": {
+          "n": 1548,
+          "denominator": 10504,
+          "proportion": 0.14737,
+          "ci95_low": 0.14072,
+          "ci95_high": 0.15428
+        },
+        "total_classification_indeterminate_after_reclassification": {
+          "n": 4171,
+          "denominator": 10504,
+          "proportion": 0.39709,
+          "ci95_low": 0.38777,
+          "ci95_high": 0.40648
+        },
+        "persistent_identified_set": {
+          "lower_continuity_supported_persistent": 0.235529,
+          "upper_not_definite_transient_unchanged": 0.632616,
+          "width": 0.397087
+        }
+      },
+      "continuity_36h": {
+        "continuity_supported_definite_persistent": 4004,
+        "continuity_gap_indeterminate": {
+          "n": 18,
+          "denominator": 10504,
+          "proportion": 0.00171,
+          "ci95_low": 0.00108,
+          "ci95_high": 0.00271
+        },
+        "total_classification_indeterminate_after_reclassification": {
+          "n": 2641,
+          "denominator": 10504,
+          "proportion": 0.25143,
+          "ci95_low": 0.24322,
+          "ci95_high": 0.25981
+        },
+        "persistent_identified_set": {
+          "lower_continuity_supported_persistent": 0.381188,
+          "upper_not_definite_transient_unchanged": 0.632616,
+          "width": 0.251428
+        }
+      }
+    },
+    "sicdb": {
+      "denominator": 2472,
+      "original_indeterminate": 0.36206,
+      "original_bounds": [
+        0.374191,
+        0.736246
+      ],
+      "continuity_24h": {
+        "continuity_supported_definite_persistent": 165,
+        "continuity_gap_indeterminate": {
+          "n": 760,
+          "denominator": 2472,
+          "proportion": 0.30744,
+          "ci95_low": 0.28956,
+          "ci95_high": 0.32592
+        },
+        "total_classification_indeterminate_after_reclassification": {
+          "n": 1655,
+          "denominator": 2472,
+          "proportion": 0.6695,
+          "ci95_low": 0.6507,
+          "ci95_high": 0.68777
+        },
+        "persistent_identified_set": {
+          "lower_continuity_supported_persistent": 0.066748,
+          "upper_not_definite_transient_unchanged": 0.736246,
+          "width": 0.669498
+        }
+      },
+      "continuity_36h": {
+        "continuity_supported_definite_persistent": 891,
+        "continuity_gap_indeterminate": {
+          "n": 34,
+          "denominator": 2472,
+          "proportion": 0.01375,
+          "ci95_low": 0.00986,
+          "ci95_high": 0.01916
+        },
+        "total_classification_indeterminate_after_reclassification": {
+          "n": 929,
+          "denominator": 2472,
+          "proportion": 0.37581,
+          "ci95_low": 0.35692,
+          "ci95_high": 0.39508
+        },
+        "persistent_identified_set": {
+          "lower_continuity_supported_persistent": 0.360437,
+          "upper_not_definite_transient_unchanged": 0.736246,
+          "width": 0.375809
+        }
+      }
+    },
+    "eicu": {
+      "denominator": 14599,
+      "original_indeterminate": 0.33995,
+      "original_bounds": [
+        0.349613,
+        0.689568
+      ],
+      "continuity_24h": {
+        "continuity_supported_definite_persistent": 1177,
+        "continuity_gap_indeterminate": {
+          "n": 3927,
+          "denominator": 14599,
+          "proportion": 0.26899,
+          "ci95_low": 0.26186,
+          "ci95_high": 0.27624
+        },
+        "total_classification_indeterminate_after_reclassification": {
+          "n": 8890,
+          "denominator": 14599,
+          "proportion": 0.60895,
+          "ci95_low": 0.601,
+          "ci95_high": 0.61683
+        },
+        "persistent_identified_set": {
+          "lower_continuity_supported_persistent": 0.080622,
+          "upper_not_definite_transient_unchanged": 0.689568,
+          "width": 0.608946
+        }
+      },
+      "continuity_36h": {
+        "continuity_supported_definite_persistent": 4875,
+        "continuity_gap_indeterminate": {
+          "n": 229,
+          "denominator": 14599,
+          "proportion": 0.01569,
+          "ci95_low": 0.01379,
+          "ci95_high": 0.01783
+        },
+        "total_classification_indeterminate_after_reclassification": {
+          "n": 5192,
+          "denominator": 14599,
+          "proportion": 0.35564,
+          "ci95_low": 0.34791,
+          "ci95_high": 0.36344
+        },
+        "persistent_identified_set": {
+          "lower_continuity_supported_persistent": 0.333927,
+          "upper_not_definite_transient_unchanged": 0.689568,
+          "width": 0.355641
+        }
+      }
+    }
+  },
+  "controlled_thinning_gate": {
+    "fixed_reference_episodes": 9323,
+    "fixed_reference_hospitals": 184,
+    "schedules_hours": [
+      12,
+      24,
+      36,
+      48
+    ],
+    "replicates_per_schedule": 500,
+    "random_phase": "global phase sampled uniformly from [0, interval) per replicate",
+    "main_selection_rule": "observed value nearest the phase-shifted bin centre; no imputation",
+    "selection_rule_sensitivity_file": "run_20260830_v4_controlled_thinning_fixed_reference_v2/eicu_v4_controlled_thinning_selection_rule_sensitivity.json"
+  },
+  "sha256": {
+    "run_20260830_v4/mimic_v4_primary_inference.json": "0cc7017f13e129af33ce8339f6488ad959280575342b1f5e7fc631881767c84d",
+    "run_20260830_ndt_continuity_gap/mimic_ndt_continuity_gap_sensitivity.json": "1ef45d31e9af0be9d03503ee748f3b74bd2e7b1cd1354f9a24744f2786d7c0d3",
+    "run_20260830_v4_patientcluster/sicdb_v4_primary_inference.json": "d5326d44e704a4edb23ee24ed06dbfc0c10bad640c850719c847860ffdf4f0ee",
+    "run_20260830_ndt_continuity_gap/sicdb_ndt_continuity_gap_sensitivity.json": "bf337deb8902c373a6cdd8f3ae5bf9c9963389b8baf962594e380849be097976",
+    "run_20260830_v4/eicu_v4_primary_inference.json": "1d9eec500a55f6af3f135680ef917817616430c4e5215f8c9ce1bb8f43f20b65",
+    "run_20260830_ndt_continuity_gap/eicu_ndt_continuity_gap_sensitivity.json": "6b4dc3faaac834a039856be13cf76fb77cfa66c1cdb5718c133e789b944239ad",
+    "run_20260830_v4_controlled_thinning_fixed_reference_v2/eicu_v4_controlled_thinning_12h.json": "4579d9ea2eb9b654f7cf2f0f5967de8284493c2370b0b070048a0d9a55ca74f6",
+    "run_20260830_v4_controlled_thinning_fixed_reference_v2/eicu_v4_controlled_thinning_24h.json": "36efe52ca0387a673eacc9034c8ef46d5a6d7ec38fd624b55ffe7a6d1e728386",
+    "run_20260830_v4_controlled_thinning_fixed_reference_v2/eicu_v4_controlled_thinning_36h.json": "ac60b36e1b2cf09d5a07a1e77a0cb7a00536e339c36f3ba06adc0414bb034a53",
+    "run_20260830_v4_controlled_thinning_fixed_reference_v2/eicu_v4_controlled_thinning_48h.json": "03e87343c094bae3b63d43cdcec2b03469786786abc9bf60b8c793ede814a6de"
+  }
+}

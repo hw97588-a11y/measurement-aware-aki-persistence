@@ -12,6 +12,7 @@ eICU-CRD v2.0, and SICdb v1.0.8 through their respective PhysioNet access
 routes and reproduce the analysis locally under the applicable data-use
 agreements.
 
-The GitHub repository is the active version-control record. A frozen release
-will be archived in Zenodo and the resulting DOI added here and to
+The active version-control record is available at
+https://github.com/hw97588-a11y/measurement-aware-aki-persistence. A frozen
+release will be archived in Zenodo and the resulting DOI added here and to
 `CITATION.cff` before journal submission.

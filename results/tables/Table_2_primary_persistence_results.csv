@@ -1,0 +1,22 @@
+Result,MIMIC-IV v3.1,SICdb v1.0.8,eICU-CRD v2.0
+Primary denominator n,10504,2472,14599
+Definite transient n,3859,652,4532
+Definite transient percent,36.7,26.4,31.0
+Definite persistent n,4022,925,5104
+Definite persistent percent,38.3,37.4,35.0
+Interval-indeterminate n,1473,605,3334
+Interval-indeterminate percent,14.0,24.5,22.8
+Right-censored unresolved n,1150,290,1629
+Right-censored unresolved percent,10.9,11.7,11.2
+All classification-indeterminate n,2623,895,4963
+All classification-indeterminate percent,25.0,36.2,34.0
+All classification-indeterminate CI low percent,24.2,34.3,33.2
+All classification-indeterminate CI high percent,25.8,38.1,34.8
+Persistent-AKI prevalence lower bound percent,38.3,37.4,35.0
+Persistent-AKI prevalence upper bound percent,63.3,73.6,69.0
+Identified-set width bootstrap CI low percent,24.2,34.3,32.6
+Identified-set width bootstrap CI high percent,25.8,38.1,35.4
+Simultaneous region lower endpoint low percent,37.1,35.1,33.3
+Simultaneous region lower endpoint high percent,39.5,39.7,36.6
+Simultaneous region upper endpoint low percent,62.1,71.3,67.3
+Simultaneous region upper endpoint high percent,64.4,75.9,70.6

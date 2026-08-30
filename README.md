@@ -12,7 +12,7 @@ The analysis evaluates whether irregular routine creatinine measurements allow
 each creatinine-defined acute kidney injury (AKI) episode to be uniquely
 classified as lasting no more than 48 hours or more than 48 hours. Episodes
 whose feasible duration interval crosses 48 hours remain classification-
-indeterminate; consequently, population persistent-AKI prevalence is reported
+indeterminate; consequently, the population prevalence of persistent AKI is reported
 as a lower and upper bound.
 
 ## Data access
@@ -37,19 +37,24 @@ patient identifiers, hospital identifiers, or episode-level model inputs.
   cleaning utilities.
 - `interval_aki_v4_engine.py`: ICU-coverage interval phenotype engine.
 - `run_v4_primary_inference.py`: primary categories, partial-identification
-  bounds, threshold curves, and cluster-respecting bootstrap inference.
+  bounds, threshold curves, and unique-patient-cluster bootstrap inference;
+  eICU uses hospital-to-patient two-stage resampling.
+- `run_v5_core_sensitivities.py`: corrected ICU-only recovery,
+  intensive-care-acquired AKI, measured-baseline, observation-window and
+  thinning-reference-cohort analyses.
+- `mimic_history_helper.py`: read-only helper for measured MIMIC preadmission
+  creatinine baselines used by the corrected sensitivity module.
+- `run_v5_observation_process.py`: corrected ICU-only, true-patient-clustered
+  recurrent retesting models. These models are descriptive and do not impute
+  persistence status.
+- `audit_v5_revision_outputs.py`: 47 cross-file, denominator, clustering and
+  arithmetic checks used for the revised submission freeze.
 - `run_ndt_continuity_gap_sensitivity.py`: 24- and 36-hour observed-positive-
   chain continuity stress tests.
 - `cache_v4_thinning_reference.py`, `controlled_thinning_sim.cpp`, and
   `aggregate_v4_controlled_thinning.py`: fixed-reference, random-phase
   controlled thinning. The temporary cache is protected and must never be
   shared.
-- `run_remaining_statistical_modules.py`: recovery-definition and informative-
-  observation analyses.
-- `run_v4_eicu_hospital_hierarchical.py`: hospital heterogeneity, empirical-
-  Bayes shrinkage, and rankability diagnostics.
-- `run_landmark_construct_validation.py`: leakage-safe 72-hour landmark
-  construct-validity analysis.
 - `tests` are supplied as root-level `test_*.py` files for compatibility with
   the frozen scripts.
 - `docs/`: locked phenotype and statistical specifications.
@@ -125,10 +130,11 @@ failure without causal interpretation.
 
 Among first AKI episodes with 48-hour potential ICU observation, persistence
 status was classification-indeterminate in 25.0% of MIMIC-IV, 36.2% of SICdb,
-and 34.0% of eICU episodes. The persistent-AKI prevalence identified sets were
+and 34.0% of eICU episodes. Patient-cluster bootstrap 95% confidence intervals
+were 24.2%–25.8%, 34.3%–38.1%, and 32.7%–35.3%, respectively. The identified sets for the prevalence of persistent AKI were
 38.3%–63.3%, 37.4%–73.6%, and 35.0%–69.0%, respectively. In the fixed eICU
-reference cohort, total phenotype failure was 54.9% under a 24-hour schedule
-and 78.9% under a 48-hour schedule.
+reference cohort, total phenotype failure was 54.9% with a 24-hour observation
+grid and 78.9% with a 48-hour observation grid.
 
 ## Reproducibility boundaries
 
@@ -138,9 +144,12 @@ and 78.9% under a 48-hour schedule.
 - Death, discharge, and ICU departure are not encoded as non-recovery.
 - Kidney replacement therapy is not automatically encoded as persistent AKI
   because timing and capture are not transportable across the three sources.
-- Hospital rankability was low and centre ranks are not performance measures.
-- The 72-hour landmark categories use no creatinine observed after the
-  landmark.
+- The final manuscript excludes the earlier mortality landmark, inverse-
+  observation weighting and hospital-ranking modules. Those exploratory
+  analyses are not part of the v1.1.0 submission freeze.
+- MIMIC-IV and SICdb inference resamples unique patients. eICU inference first
+  resamples hospitals and then unique patients within sampled hospitals,
+  retaining all eligible episodes for each sampled patient.
 
 ## Authors and contact
 
@@ -151,5 +160,5 @@ Cheng Shen, Bohao Xue, and Jin Li. Correspondence: Jin Li,
 
 Code is released under the MIT License. Please cite this repository using
 `CITATION.cff` and cite all three source datasets under their exact versions
-and persistent identifiers. A versioned Zenodo archive and DOI will be added
-before journal submission.
+and persistent identifiers. `.zenodo.json` contains deposit-ready metadata;
+the DOI field will be added after the authors create the Zenodo archive.

@@ -22,7 +22,7 @@ import numpy as np
 from scipy.stats import rankdata, spearmanr
 
 from interval_aki_v4_engine import M72, UNRESOLVED, classify_first_episode
-from run_interval_aki_primary import EICU, M7D, Spell, as_float, deduplicate, is_adult, valid_creatinine
+from run_interval_aki_primary import EICU, M7D, Spell, as_float, deduplicate, is_adult, require_source_path, valid_creatinine
 
 
 CATEGORIES = ["definite_transient", "definite_persistent", "interval_indeterminate", "right_censored_unresolved"]
@@ -62,8 +62,9 @@ def fast_eicu_source() -> tuple[str, dict[str, Spell], dict[str, list[tuple[floa
     the broad text filter, after which Python validates the 1.28M candidate
     creatinine records using the same units and time rules as the v4 loader.
     """
-    by_health: dict[str, list[tuple[float, float, float, str, str, float | None, str, str, float | None, str]]] = defaultdict(list)
-    with gzip.open(EICU / "patient.csv.gz", "rt", encoding="utf-8", errors="replace", newline="") as handle:
+    eicu_source = require_source_path(EICU, "EICU_CRD_PATH")
+    by_health: dict[str, list[tuple[float, float, float, str, str, str, float | None, str, str, float | None, str]]] = defaultdict(list)
+    with gzip.open(eicu_source / "patient.csv.gz", "rt", encoding="utf-8", errors="replace", newline="") as handle:
         for row in csv.DictReader(handle):
             if not is_adult(row["age"]):
                 continue
@@ -73,27 +74,38 @@ def fast_eicu_source() -> tuple[str, dict[str, Spell], dict[str, list[tuple[floa
             start = -hospital_offset
             by_health[row["patienthealthsystemstayid"]].append((
                 start, start + unit_end, as_float(row["unitvisitnumber"]) or 0, row["patientunitstayid"], row["hospitalid"],
-                as_float(row["age"]), row["gender"], row["unitadmitsource"], as_float(row["hospitaldischargeoffset"]), row["hospitaldischargestatus"],
+                row["uniquepid"], as_float(row["age"]), row["gender"], row["unitadmitsource"], as_float(row["hospitaldischargeoffset"]), row["hospitaldischargestatus"],
             ))
     spells: dict[str, Spell] = {}
     unit_mapping: dict[str, tuple[str, float]] = {}
     for health, units in by_health.items():
         units.sort(key=lambda item: (item[0], item[2], item[3]))
-        first_start, current_end, _, first_stay, hospital, age, sex, admission_type, hospital_end_offset, hospital_status = units[0]
+        first_start, current_end, _, first_stay, hospital, unique_patient, age, sex, admission_type, hospital_end_offset, hospital_status = units[0]
         included = [first_stay]
         for unit_start, unit_end, _, stay, unit_hospital, *_ in units[1:]:
             if unit_hospital != hospital or unit_start > current_end + 4 * 60:
                 break
             included.append(stay)
             current_end = max(current_end, unit_end)
-        spells[health] = Spell(health, current_end - first_start, hospital=hospital, age=age, sex=sex, admission_type=admission_type,
-                               extra={"hospital_discharge_offset": hospital_end_offset, "hospital_discharge_status": hospital_status})
+        spells[health] = Spell(
+            health,
+            current_end - first_start,
+            hospital=hospital,
+            age=age,
+            sex=sex,
+            admission_type=admission_type,
+            extra={
+                "hospital_discharge_offset": hospital_end_offset,
+                "hospital_discharge_status": hospital_status,
+                "uniquepid": unique_patient,
+            },
+        )
         for unit_start, _, _, stay, unit_hospital, *_ in units:
             if stay in included and unit_hospital == hospital:
                 unit_mapping[stay] = (health, unit_start - first_start)
     raw_units: dict[str, Counter] = defaultdict(Counter)
     labs: dict[str, list[tuple[float, float]]] = defaultdict(list)
-    gzip_process = subprocess.Popen(["gzip", "-dc", str(EICU / "lab.csv.gz")], stdout=subprocess.PIPE)
+    gzip_process = subprocess.Popen(["gzip", "-dc", str(eicu_source / "lab.csv.gz")], stdout=subprocess.PIPE)
     if gzip_process.stdout is None:
         raise RuntimeError("Cannot start gzip lab stream")
     filter_process = subprocess.Popen(["rg", "-i", ",1,creatinine,"], stdin=gzip_process.stdout, stdout=subprocess.PIPE)

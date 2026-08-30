@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import numpy as np
@@ -66,16 +66,18 @@ def _cluster_bootstrap(episodes: list[V4Episode], replicates: int, seed: int) ->
     return output
 
 
-def _two_stage_hospital_bootstrap(episodes: list[V4Episode], replicates: int, seed: int) -> dict[str, object]:
-    """Resample hospitals then episodes within hospital for eICU."""
-    hospitals: dict[str, np.ndarray] = {}
-    grouped: dict[str, list[tuple[int, int]]] = defaultdict(list)
+def _two_stage_hospital_patient_bootstrap(episodes: list[V4Episode], replicates: int, seed: int) -> dict[str, object]:
+    """Resample hospitals, then unique patients within each sampled hospital."""
+    grouped: dict[str, dict[str, list[tuple[int, int]]]] = defaultdict(lambda: defaultdict(list))
     for episode in episodes:
-        grouped[str(episode.hospital_id)].append((int(episode.category == "definite_persistent"), int(episode.category != "definite_transient")))
-    for hospital, values in grouped.items():
-        hospitals[hospital] = np.asarray(values, dtype=int)
-    values = list(hospitals.values())
-    n_hospitals = len(values)
+        grouped[str(episode.hospital_id)][episode.cluster_id].append(
+            (int(episode.category == "definite_persistent"), int(episode.category != "definite_transient"))
+        )
+    hospitals = [
+        [np.asarray(records, dtype=int) for records in patients.values()]
+        for patients in grouped.values()
+    ]
+    n_hospitals = len(hospitals)
     rng = np.random.default_rng(seed)
     lower = np.empty(replicates)
     upper = np.empty(replicates)
@@ -83,16 +85,24 @@ def _two_stage_hospital_bootstrap(episodes: list[V4Episode], replicates: int, se
         selected_hospitals = rng.integers(0, n_hospitals, n_hospitals)
         total_n = total_lower = total_upper = 0
         for selected in selected_hospitals:
-            records = values[selected]
-            sample = records[rng.integers(0, len(records), len(records))]
-            total_n += len(sample)
-            total_lower += int(sample[:, 0].sum())
-            total_upper += int(sample[:, 1].sum())
+            patient_records = hospitals[selected]
+            selected_patients = rng.integers(0, len(patient_records), len(patient_records))
+            for patient_index in selected_patients:
+                records = patient_records[patient_index]
+                total_n += len(records)
+                total_lower += int(records[:, 0].sum())
+                total_upper += int(records[:, 1].sum())
         lower[index] = total_lower / total_n
         upper[index] = total_upper / total_n
     n, lo_count, hi_count = _parameters(episodes)
     output = _summarize_bootstrap(lower, upper, lo_count / n, hi_count / n)
-    output["resampling"] = {"level": "hospital then episodes within hospital", "hospitals": n_hospitals, "episodes": n}
+    output["resampling"] = {
+        "level": "hospital then unique patient within hospital; all eligible episodes for a sampled patient retained",
+        "hospitals": n_hospitals,
+        "unique_hospital_patient_clusters": sum(len(patients) for patients in hospitals),
+        "unique_patients_global": len({episode.cluster_id for episode in episodes}),
+        "episodes": n,
+    }
     return output
 
 
@@ -161,12 +171,30 @@ def main() -> None:
     source, spells, labs = load_source(args.database)
     episodes = derive_episodes(source, spells, labs)
     primary = primary_population(episodes)
-    inference = _two_stage_hospital_bootstrap(primary, args.bootstrap_replicates, args.seed) if args.database == "eicu" else _cluster_bootstrap(primary, args.bootstrap_replicates, args.seed)
+    inference = _two_stage_hospital_patient_bootstrap(primary, args.bootstrap_replicates, args.seed) if args.database == "eicu" else _cluster_bootstrap(primary, args.bootstrap_replicates, args.seed)
+    summary = primary_summary(episodes)
+    summary["monitoring_indeterminate"]["cluster_bootstrap_ci95"] = inference["percentile_ci"]["identified_set_width"]
+    spell_clusters = [str(spell.extra.get("cluster_id", spell.identifier)) for spell in spells.values()]
+    spell_cluster_counts = Counter(spell_clusters)
+    episode_cluster_counts = Counter(episode.cluster_id for episode in episodes)
+    primary_cluster_counts = Counter(episode.cluster_id for episode in primary)
     output = {
         "source": source,
         "scope": "v4 ICU-coverage primary phenotype, structural-censoring separation, threshold robustness, and cluster-appropriate partial-identification inference.",
         "denominator_definition": "First AKI episodes with database ICU coverage continuing through first positive creatinine plus 48 h; no subsequent creatinine measurement is required for inclusion.",
-        "primary": primary_summary(episodes),
+        "population_structure": {
+            "adult_first_continuous_icu_spells": len(spells),
+            "unique_patients_in_source_spells": len(spell_cluster_counts),
+            "patients_with_multiple_source_spells": sum(count > 1 for count in spell_cluster_counts.values()),
+            "first_aki_episodes": len(episodes),
+            "unique_patients_with_first_aki_episode": len(episode_cluster_counts),
+            "patients_with_multiple_first_aki_episode_admissions": sum(count > 1 for count in episode_cluster_counts.values()),
+            "episodes_from_patients_with_multiple_first_aki_episode_admissions": sum(count for count in episode_cluster_counts.values() if count > 1),
+            "primary_48h_episodes": len(primary),
+            "unique_patients_in_primary_48h_population": len(primary_cluster_counts),
+            "patients_with_multiple_primary_48h_episode_admissions": sum(count > 1 for count in primary_cluster_counts.values()),
+        },
+        "primary": summary,
         "partial_identification_inference": inference,
         "threshold_curve": _threshold_curve_with_coverage(source, spells, labs),
         "monitoring_indeterminacy_decomposition": _indeterminacy_decomposition(primary),

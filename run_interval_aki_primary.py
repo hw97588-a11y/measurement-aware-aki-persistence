@@ -23,9 +23,22 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 
-MIMIC = Path(os.environ.get("MIMIC_IV_PATH", "data/mimic-iv-3.1.zip")).expanduser()
-EICU = Path(os.environ.get("EICU_CRD_PATH", "data/eicu-crd-2.0")).expanduser()
-SICDB = Path(os.environ.get("SICDB_PATH", "data/sicdb-1.0.8.rar")).expanduser()
+def _configured_path(environment_variable: str) -> Path | None:
+    value = os.environ.get(environment_variable)
+    return Path(value).expanduser() if value else None
+
+
+def require_source_path(path: Path | None, environment_variable: str) -> Path:
+    if path is None:
+        raise RuntimeError(f"Set {environment_variable} to the governed source-data path before running this analysis.")
+    if not path.exists():
+        raise FileNotFoundError(f"{environment_variable} does not exist: {path}")
+    return path
+
+
+MIMIC = _configured_path("MIMIC_IV_PATH")
+EICU = _configured_path("EICU_CRD_PATH")
+SICDB = _configured_path("SICDB_PATH")
 SICDB_MEMBER_ROOT = os.environ.get(
     "SICDB_MEMBER_ROOT",
     "salzburg-intensive-care-database-sicdb-a-freely-accessible-intensive-care-database-1.0.8",
@@ -263,7 +276,7 @@ def mimic_csv(archive: zipfile.ZipFile, member: str):
 
 
 def load_mimic() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]:
-    with zipfile.ZipFile(MIMIC) as archive:
+    with zipfile.ZipFile(require_source_path(MIMIC, "MIMIC_IV_PATH")) as archive:
         adults: dict[str, tuple[float | None, str]] = {}
         for row in mimic_csv(archive, "mimic-iv-3.1/hosp/patients.csv.gz"):
             if is_adult(row["anchor_age"]):
@@ -332,11 +345,12 @@ def load_mimic() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]
 
 
 def eicu_csv(name: str):
-    return csv.DictReader(gzip.open(EICU / name, "rt", encoding="utf-8", errors="replace", newline=""))
+    source = require_source_path(EICU, "EICU_CRD_PATH")
+    return csv.DictReader(gzip.open(source / name, "rt", encoding="utf-8", errors="replace", newline=""))
 
 
 def load_eicu() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]:
-    by_health: dict[str, list[tuple[float, float, float, str, str, float | None, str, str, float | None, str]]] = defaultdict(list)
+    by_health: dict[str, list[tuple[float, float, float, str, str, str, float | None, str, str, float | None, str]]] = defaultdict(list)
     for row in eicu_csv("patient.csv.gz"):
         if not is_adult(row["age"]):
             continue
@@ -346,13 +360,13 @@ def load_eicu() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]
         start = -hospital_offset
         by_health[row["patienthealthsystemstayid"]].append((
             start, start + unit_end, as_float(row["unitvisitnumber"]) or 0, row["patientunitstayid"], row["hospitalid"],
-            as_float(row["age"]), row["gender"], row["unitadmitsource"], as_float(row["hospitaldischargeoffset"]), row["hospitaldischargestatus"],
+            row["uniquepid"], as_float(row["age"]), row["gender"], row["unitadmitsource"], as_float(row["hospitaldischargeoffset"]), row["hospitaldischargestatus"],
         ))
     spells: dict[str, Spell] = {}
     unit_mapping: dict[str, tuple[str, float]] = {}
     for health, units in by_health.items():
         units.sort(key=lambda item: (item[0], item[2], item[3]))
-        first_start, current_end, _, first_stay, hospital, age, sex, admit_source, hospital_end_offset, hospital_status = units[0]
+        first_start, current_end, _, first_stay, hospital, unique_patient, age, sex, admit_source, hospital_end_offset, hospital_status = units[0]
         included = [first_stay]
         for unit_start, unit_end, _, stay, unit_hospital, *_ in units[1:]:
             if unit_hospital != hospital or unit_start > current_end + 4 * 60:
@@ -366,7 +380,11 @@ def load_eicu() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]
             age=age,
             sex=sex,
             admission_type=admit_source,
-            extra={"hospital_discharge_offset": hospital_end_offset, "hospital_discharge_status": hospital_status},
+            extra={
+                "hospital_discharge_offset": hospital_end_offset,
+                "hospital_discharge_status": hospital_status,
+                "uniquepid": unique_patient,
+            },
         )
         for unit_start, _, _, stay, unit_hospital, *_ in units:
             if stay in included and unit_hospital == hospital:
@@ -402,7 +420,8 @@ def load_eicu() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]
 
 def sicdb_csv(member: str):
     import subprocess
-    process = subprocess.Popen(["bsdtar", "-xOf", str(SICDB), f"{SICDB_MEMBER_ROOT}/{member}"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    source = require_source_path(SICDB, "SICDB_PATH")
+    process = subprocess.Popen(["bsdtar", "-xOf", str(source), f"{SICDB_MEMBER_ROOT}/{member}"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if process.stdout is None:
         raise RuntimeError(f"Cannot open SICdb member {member}")
     return csv.DictReader(io.TextIOWrapper(gzip.GzipFile(fileobj=process.stdout), encoding="utf-8", errors="replace", newline="")), process

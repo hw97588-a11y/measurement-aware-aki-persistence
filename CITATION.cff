@@ -10,10 +10,10 @@ authors:
   - family-names: Li
     given-names: Jin
     orcid: "https://orcid.org/0000-0002-6161-129X"
-version: 1.0.0
+version: 1.1.0
 date-released: 2026-08-30
 repository-code: "https://github.com/hw97588-a11y/measurement-aware-aki-persistence"
-url: "https://github.com/hw97588-a11y/measurement-aware-aki-persistence"
+url: "https://github.com/hw97588-a11y/measurement-aware-aki-persistence/releases/tag/v1.1.0"
 license: MIT
 keywords:
   - acute kidney injury

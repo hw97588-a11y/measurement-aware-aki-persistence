@@ -13,6 +13,7 @@ routes and reproduce the analysis locally under the applicable data-use
 agreements.
 
 The active version-control record is available at
-https://github.com/hw97588-a11y/measurement-aware-aki-persistence. A frozen
-release will be archived in Zenodo and the resulting DOI added here and to
-`CITATION.cff` before journal submission.
+https://github.com/hw97588-a11y/measurement-aware-aki-persistence. The corrected
+submission freeze is version 1.1.0. Deposit-ready Zenodo metadata is provided
+in `.zenodo.json`; the authors must create the archive and then add its DOI here,
+to `CITATION.cff`, and to the manuscript before journal submission.

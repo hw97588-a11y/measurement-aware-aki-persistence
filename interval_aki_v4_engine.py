@@ -12,7 +12,7 @@ import math
 from dataclasses import dataclass, replace
 from typing import Callable
 
-from run_interval_aki_primary import M48, M7D, Spell, deduplicate, load_eicu, load_mimic, load_sicdb, sicdb_csv, wilson
+from run_interval_aki_primary import M48, M7D, Spell, deduplicate, load_eicu, load_mimic, load_sicdb, sicdb_csv
 
 
 M24 = 24 * 60
@@ -193,8 +193,18 @@ def _sicdb_v4() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]
 
 
 def _eicu_v4() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]:
-    spells, labs = load_eicu()
-    revised = {identifier: replace(spell, extra={**spell.extra, "cluster_id": identifier}) for identifier, spell in spells.items()}
+    # Use the validated creatinine-only streaming reader for the 2.3-GB eICU
+    # laboratory file; it applies the same unit and time rules as load_eicu.
+    from run_v4_controlled_thinning import fast_eicu_source
+
+    _, spells, labs = fast_eicu_source()
+    revised = {
+        identifier: replace(
+            spell,
+            extra={**spell.extra, "cluster_id": str(spell.extra["uniquepid"])},
+        )
+        for identifier, spell in spells.items()
+    }
     return revised, labs
 
 
@@ -242,7 +252,11 @@ def primary_summary(episodes: list[V4Episode]) -> dict[str, object]:
         "structural_coverage_censored_before_48h": sum(episode.structural_coverage_censored for episode in episodes),
         "primary_48h_icu_coverage_denominator": len(primary),
         "primary_categories": cats,
-        "monitoring_indeterminate": wilson(uncertain, len(primary)),
+        "monitoring_indeterminate": {
+            "n": uncertain,
+            "denominator": len(primary),
+            "proportion": round(uncertain / len(primary), 6) if primary else None,
+        },
         "persistent_identified_set": {
             "lower_definite_persistent": round(cats["definite_persistent"] / len(primary), 6) if primary else None,
             "upper_not_definite_transient": round(1 - cats["definite_transient"] / len(primary), 6) if primary else None,

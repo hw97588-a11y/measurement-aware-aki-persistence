@@ -1,0 +1,29 @@
+{
+  "title": "Measurement-aware identification of 48-hour acute kidney injury persistence",
+  "upload_type": "software",
+  "description": "Reproducible phenotype specification, database mappings, statistical scripts, synthetic tests, and non-disclosive aggregate results for interval-defined 48-hour persistence of creatinine-defined acute kidney injury across MIMIC-IV v3.1, SICdb v1.0.8, and eICU-CRD v2.0. Version 1.1.0 corrects unique-patient clustering, uses hospital-to-patient two-stage bootstrap resampling for eICU, removes obsolete mortality, inverse-observation-weighting, and hospital-ranking modules from the submission freeze, and adds core robustness and observation-process outputs.",
+  "creators": [
+    {"name": "Shen, Cheng"},
+    {"name": "Xue, Bohao"},
+    {"name": "Li, Jin", "orcid": "0000-0002-6161-129X"}
+  ],
+  "license": "MIT",
+  "access_right": "open",
+  "version": "1.1.0",
+  "publication_date": "2026-08-30",
+  "keywords": [
+    "acute kidney injury",
+    "creatinine",
+    "interval censoring",
+    "partial identification",
+    "electronic health records",
+    "critical care"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/hw97588-a11y/measurement-aware-aki-persistence",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

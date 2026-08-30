@@ -33,7 +33,7 @@ before first positivity. Recovery required an observed creatinine below both
 the fixed baseline plus 0.3 mg/dL and 1.5 times the fixed baseline.
 
 The true onset lay between the last observed non-AKI value and first observed
-AKI-positive value. The true recovery lay between the last observed AKI-state
+AKI-positive value. The true recovery lay between the last observed AKI-positive
 value and first observed recovery value. The minimum and maximum feasible
 durations were derived from these intervals. Episodes with a maximum duration
 of 48 hours or less were definite transient; those with a minimum duration
@@ -51,7 +51,7 @@ recovery followed by recurrent AKI between measurements cannot be excluded.
 
 ## Partial identification and sampling uncertainty
 
-For threshold c=48 hours, the persistent-AKI prevalence lower bound was the
+For threshold c=48 hours, the lower bound for the prevalence of persistent AKI was the
 proportion with minimum feasible duration greater than c. The upper bound was
 the proportion whose maximum feasible duration could exceed c, equivalent to
 one minus the definite-transient proportion. Their difference equalled the
@@ -59,13 +59,15 @@ classification-indeterminate proportion. The identified set and its width
 quantified identification uncertainty.
 
 Sampling uncertainty was assessed with 2,000 bootstrap replicates using a
-fixed seed. MIMIC-IV and SICdb used patient-cluster resampling; SICdb clusters
-were defined by its de-identified PatientID. eICU used two-stage resampling of
-hospitals followed by episodes within sampled hospitals. Percentile intervals
-were reported for each bound and the identified-set width. A conservative
-unstudentized max-deviation bootstrap region was additionally constructed to
-cover both endpoints simultaneously. Wilson intervals were used for simple
-source-specific proportions.
+fixed seed. MIMIC-IV and SICdb used unique-patient cluster resampling; SICdb
+clusters were defined by its de-identified PatientID. eICU first resampled
+hospitals and then true unique patients (`uniquepid`) within sampled hospitals,
+retaining all eligible episodes belonging to each sampled patient. Percentile
+intervals were reported for each bound and the identified-set width. A
+conservative unstudentized max-deviation bootstrap region was additionally
+constructed to cover both endpoints simultaneously. The same cluster-
+respecting bootstrap interval was used whenever the classification-
+indeterminate proportion or identical identified-set width was reported.
 
 ## Robustness analyses
 
@@ -89,22 +91,21 @@ equation logistic models in which each eligible measured creatinine was a
 recurrent opportunity and the outcome was another measurement within 24
 hours. Predictors available at the opportunity included the most recent
 creatinine, preceding change, current observed AKI state and intensive care
-day. Model coefficients were reported as odds ratios. Stabilized
-inverse-observation weighting was a source-specific robustness analysis; it
-did not impute unobserved recovery times or replace the interval-defined
-primary estimand. The earlier MIMIC weighting analysis used its broader
-hospital-laboratory observation scope and was therefore not presented as a
-weighted version of the v4 ICU-only primary estimate.
+day. Model coefficients were reported as odds ratios, accompanied by
+marginally standardized retesting probabilities and risk differences. These
+descriptive models used the same ICU-only scope and true unique-patient
+clustering as the primary analysis. They were not used to correct, impute, or
+replace the interval-defined primary persistence estimand.
 
-## Controlled thinning and hospital comparability
+## Controlled thinning
 
 Controlled thinning used a fixed eICU measurement-rich reference cohort of
 9,323 first AKI episodes from 184 hospitals, each with potential 48-hour ICU
 coverage and at least four observed creatinines from first positivity through
 72 hours. This was a maximally observed reference trajectory, not a biological
-gold standard. Existing measurements were reduced under maximum sampling
-frequencies of 12, 24, 36 and 48 hours. For each schedule, 500 global phases
-were independently sampled from a uniform distribution over one schedule
+gold standard. Existing measurements were reduced under observation-grid
+intervals of 12, 24, 36 and 48 hours. For each grid, 500 global phases
+were independently sampled from a uniform distribution over one grid
 interval. The observation nearest each phase-shifted bin centre was retained;
 no values were imputed. First- and last-observation selection rules were
 examined as sensitivity analyses.
@@ -114,24 +115,11 @@ retention, conditional classification indeterminacy among retained and
 primary-eligible AKI episodes, total phenotype failure (non-retention or
 indeterminacy), and the full reference-to-thinned category transition matrix.
 
-eICU hospital heterogeneity in classification indeterminacy was examined using
-a case-mix-adjusted binomial random-intercept model with empirical-Bayes
-shrinkage. Between-hospital variance, median odds ratio, conditional
-reliability and uncertainty in ranks were reported. Because rankability was
-low, centre rankings were not interpreted as performance measures.
+## Multiplicity and software
 
-## Construct validity, multiplicity and software
-
-For associative construct validation, a 72-hour landmark was set after first
-AKI positivity. Only patients alive and in hospital at the landmark were
-included; classification used no creatinine observed after the landmark, and
-in-hospital mortality follow-up began thereafter. Models were source-specific
-and non-causal.
-
-The study had one primary descriptive estimand. Robustness, observation-process,
-controlled-thinning, hospital and landmark analyses were supportive or
-exploratory; no multiplicity-adjusted confirmatory claims were made. Analyses
+The study had one primary descriptive estimand. Robustness, observation-process
+and controlled-thinning analyses were supportive or exploratory; no
+multiplicity-adjusted confirmatory claims were made. Analyses
 used Python 3.13 with NumPy, SciPy, pandas and statsmodels. Raw source data
-remained read-only on the external drive. Eleven primary-engine boundary tests,
-four continuity-diagnostic unit tests and 16 final-gate reconciliation checks
-passed.
+remained read-only on the governed data volume. Fifteen phenotype and
+continuity unit tests and 47 final-revision reconciliation checks passed.

@@ -8,7 +8,7 @@ Target: *Nephrology Dialysis Transplantation*, Original Article.
 
 Routine creatinine surveillance leaves the 48-hour persistence status of a
 substantial proportion of creatinine-defined AKI episodes indeterminate.
-Consequently, population persistent-AKI prevalence is bounded rather than
+Consequently, the population prevalence of persistent AKI is bounded rather than
 uniquely point-estimated, and phenotype comparability deteriorates when the
 recorded observation schedule is thinned.
 
@@ -16,7 +16,7 @@ recorded observation schedule is thinned.
 
 - Episode level: `definite transient`, `definite persistent`, and
   `classification-indeterminate under the observed creatinine schedule`.
-- Population level: `persistent-AKI prevalence identified set`, `lower bound`,
+- Population level: `identified set for persistent AKI prevalence`, `lower bound`,
   and `upper bound`.
 - Primary bounds: `logical bounds under the prespecified episode-continuity
   convention`.
@@ -37,7 +37,7 @@ For each database separately, among first creatinine-defined AKI episodes with
 ICU coverage through first positivity plus 48 hours:
 
 1. proportion classification-indeterminate;
-2. persistent-AKI lower and upper bounds;
+2. lower and upper bounds for the prevalence of persistent AKI;
 3. 2,000-replicate cluster-respecting sampling intervals/confidence region.
 
 No patient-level cross-database pooling.
@@ -47,16 +47,8 @@ No patient-level cross-database pooling.
 1. confirmed recovery definitions;
 2. strict ICU-acquired AKI;
 3. baseline-creatinine strategies;
-4. recurrent observation-process model and inverse-observation weighting;
-5. eICU fixed-reference controlled thinning;
-6. eICU hospital heterogeneity as a comparability diagnostic, without
-   performance ranking.
-
-### Construct validity
-
-The 72-hour landmark mortality analysis is associative only. Phenotype labels
-use no creatinine after the landmark, and mortality follow-up begins after the
-landmark. It is not in the title or conclusion.
+4. recurrent observation-process model using true unique-patient clusters;
+5. eICU fixed-reference controlled thinning.
 
 ### Additional post hoc robustness
 
@@ -76,18 +68,18 @@ landmark. It is not in the title or conclusion.
   non-retention from conditional indeterminacy: PASS.
 - Controlled thinning uses 500 random phases at every schedule and no
   imputation: PASS.
-- Hospital rankability assessed and found too low for performance claims:
-  PASS; rankings demoted to supplement.
-- Landmark future-information guard: PASS.
-- Primary engine synthetic boundary tests and reconciliation audit: PASS.
+- Primary engine synthetic boundary tests and reconciliation audit: PASS
+  (15/15 unit tests; 47/47 revision checks).
+- eICU inference resamples hospitals and then true unique patients within
+  sampled hospitals: PASS.
 - Single-episode continuity convention disclosed and 24/36-hour gap
   sensitivity completed: PASS.
 
 ## Results that must appear in the abstract
 
 - Classification-indeterminate: 25.0% MIMIC-IV, 36.2% SICdb, 34.0% eICU.
-- Persistent-AKI identified sets: 38.3%–63.3%, 37.4%–73.6%, and 35.0%–69.0%,
-  respectively.
+- Identified sets for the prevalence of persistent AKI: 38.3%–63.3%,
+  37.4%–73.6%, and 35.0%–69.0%, respectively.
 - In eICU controlled thinning, fixed-reference total phenotype failure:
   54.9% under a 24-hour schedule and 78.9% under a 48-hour schedule.
 

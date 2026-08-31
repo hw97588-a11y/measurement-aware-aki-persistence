@@ -1,0 +1,554 @@
+{
+  "status": "PASS",
+  "analysis_version": "v6 targeted reanalysis / manuscript package v1.2",
+  "implementation_changes": [
+    "Post-onset creatinine follow-up retained through the applicable spell end, while index onset remained restricted to ICU day 0-7.",
+    "SICdb coverage end re-anchored as (TimeOfStay - ICUOffset)/60 with non-positive intervals excluded.",
+    "Controlled thinning anchored to the fixed index AKI episode; later recurrence cannot substitute for a missed index episode."
+  ],
+  "headline": {
+    "mimic": {
+      "all_index_episodes": 18001,
+      "primary_48h_opportunity_episodes": 10504,
+      "unique_patients_primary": 9650,
+      "categories": {
+        "definite_transient": 3932,
+        "definite_persistent": 4330,
+        "interval_indeterminate": 1556,
+        "right_censored_unresolved": 686
+      },
+      "classification_indeterminate": {
+        "n": 2242,
+        "denominator": 10504,
+        "proportion": 0.213442,
+        "cluster_bootstrap_ci95": [
+          0.205756,
+          0.221978
+        ]
+      },
+      "persistent_episode_proportion_identified_set": [
+        0.412224,
+        0.625666
+      ],
+      "feasibility": {
+        "all_first_observed_index_aki_episodes": 18001,
+        "with_48h_opportunity_and_uniquely_classifiable": {
+          "n": 8262,
+          "proportion": 0.458975
+        },
+        "with_48h_opportunity_but_classification_indeterminate": {
+          "n": 2242,
+          "proportion": 0.124549
+        },
+        "insufficient_48h_icu_observation_opportunity": {
+          "n": 7497,
+          "proportion": 0.416477
+        }
+      },
+      "stage_1_indeterminate": {
+        "n": 1727,
+        "proportion": 0.205058,
+        "cluster_bootstrap_ci95": [
+          0.195926,
+          0.213541
+        ]
+      },
+      "stage_2_or_3_indeterminate": {
+        "n": 515,
+        "proportion": 0.247358,
+        "cluster_bootstrap_ci95": [
+          0.229244,
+          0.266384
+        ]
+      },
+      "one_episode_per_patient_indeterminate": {
+        "n": 2041,
+        "proportion": 0.211503,
+        "cluster_bootstrap_ci95": [
+          0.203627,
+          0.219692
+        ]
+      }
+    },
+    "sicdb": {
+      "all_index_episodes": 3860,
+      "primary_48h_opportunity_episodes": 2458,
+      "unique_patients_primary": 2338,
+      "categories": {
+        "definite_transient": 658,
+        "definite_persistent": 1019,
+        "interval_indeterminate": 644,
+        "right_censored_unresolved": 137
+      },
+      "classification_indeterminate": {
+        "n": 781,
+        "denominator": 2458,
+        "proportion": 0.317738,
+        "cluster_bootstrap_ci95": [
+          0.298748,
+          0.334291
+        ]
+      },
+      "persistent_episode_proportion_identified_set": [
+        0.414565,
+        0.732303
+      ],
+      "feasibility": {
+        "all_first_observed_index_aki_episodes": 3860,
+        "with_48h_opportunity_and_uniquely_classifiable": {
+          "n": 1677,
+          "proportion": 0.434456
+        },
+        "with_48h_opportunity_but_classification_indeterminate": {
+          "n": 781,
+          "proportion": 0.202332
+        },
+        "insufficient_48h_icu_observation_opportunity": {
+          "n": 1402,
+          "proportion": 0.363212
+        }
+      },
+      "stage_1_indeterminate": {
+        "n": 679,
+        "proportion": 0.31729,
+        "cluster_bootstrap_ci95": [
+          0.297713,
+          0.336636
+        ]
+      },
+      "stage_2_or_3_indeterminate": {
+        "n": 102,
+        "proportion": 0.320755,
+        "cluster_bootstrap_ci95": [
+          0.271293,
+          0.371429
+        ]
+      },
+      "one_episode_per_patient_indeterminate": {
+        "n": 753,
+        "proportion": 0.32207,
+        "cluster_bootstrap_ci95": [
+          0.302823,
+          0.341317
+        ]
+      }
+    },
+    "eicu": {
+      "all_index_episodes": 26567,
+      "primary_48h_opportunity_episodes": 14599,
+      "unique_patients_primary": 13896,
+      "categories": {
+        "definite_transient": 4582,
+        "definite_persistent": 5520,
+        "interval_indeterminate": 3504,
+        "right_censored_unresolved": 993
+      },
+      "classification_indeterminate": {
+        "n": 4497,
+        "denominator": 14599,
+        "proportion": 0.308035,
+        "cluster_bootstrap_ci95": [
+          0.294849,
+          0.322612
+        ]
+      },
+      "persistent_episode_proportion_identified_set": [
+        0.378108,
+        0.686143
+      ],
+      "feasibility": {
+        "all_first_observed_index_aki_episodes": 26567,
+        "with_48h_opportunity_and_uniquely_classifiable": {
+          "n": 10102,
+          "proportion": 0.380246
+        },
+        "with_48h_opportunity_but_classification_indeterminate": {
+          "n": 4497,
+          "proportion": 0.16927
+        },
+        "insufficient_48h_icu_observation_opportunity": {
+          "n": 11968,
+          "proportion": 0.450484
+        }
+      },
+      "stage_1_indeterminate": {
+        "n": 3501,
+        "proportion": 0.312227,
+        "cluster_bootstrap_ci95": [
+          0.296214,
+          0.327893
+        ]
+      },
+      "stage_2_or_3_indeterminate": {
+        "n": 996,
+        "proportion": 0.294152,
+        "cluster_bootstrap_ci95": [
+          0.271906,
+          0.316671
+        ]
+      },
+      "one_episode_per_patient_indeterminate": {
+        "n": 4258,
+        "proportion": 0.306419,
+        "cluster_bootstrap_ci95": [
+          0.293099,
+          0.320245
+        ]
+      }
+    }
+  },
+  "controlled_thinning": {
+    "12": {
+      "index_episode_retention": {
+        "monte_carlo_median": 0.898519,
+        "monte_carlo_p025": 0.89249,
+        "monte_carlo_p975": 0.904086
+      },
+      "primary_eligible_retention": {
+        "monte_carlo_median": 0.886823,
+        "monte_carlo_p025": 0.880388,
+        "monte_carlo_p975": 0.893258
+      },
+      "conditional_monitoring_indeterminate_among_retained_primary_eligible": {
+        "monte_carlo_median": 0.286436,
+        "monte_carlo_p025": 0.281953,
+        "monte_carlo_p975": 0.292576
+      },
+      "total_phenotype_failure_fixed_reference_denominator": {
+        "monte_carlo_median": 0.366088,
+        "monte_carlo_p025": 0.361083,
+        "monte_carlo_p975": 0.37656
+      },
+      "hospital_raw_vs_thinned_failure_rank_spearman": {
+        "monte_carlo_median": 0.630484,
+        "monte_carlo_p025": 0.553146,
+        "monte_carlo_p975": 0.703482
+      },
+      "hospital_changed_failure_quartile_proportion": {
+        "monte_carlo_median": 0.53271,
+        "monte_carlo_p025": 0.476636,
+        "monte_carlo_p975": 0.598131
+      }
+    },
+    "24": {
+      "index_episode_retention": {
+        "monte_carlo_median": 0.773391,
+        "monte_carlo_p025": 0.741417,
+        "monte_carlo_p975": 0.802607
+      },
+      "primary_eligible_retention": {
+        "monte_carlo_median": 0.743565,
+        "monte_carlo_p025": 0.707252,
+        "monte_carlo_p975": 0.778705
+      },
+      "conditional_monitoring_indeterminate_among_retained_primary_eligible": {
+        "monte_carlo_median": 0.390655,
+        "monte_carlo_p025": 0.366845,
+        "monte_carlo_p975": 0.415939
+      },
+      "total_phenotype_failure_fixed_reference_denominator": {
+        "monte_carlo_median": 0.547549,
+        "monte_carlo_p025": 0.507651,
+        "monte_carlo_p975": 0.584883
+      },
+      "hospital_raw_vs_thinned_failure_rank_spearman": {
+        "monte_carlo_median": 0.183923,
+        "monte_carlo_p025": 0.040052,
+        "monte_carlo_p975": 0.268838
+      },
+      "hospital_changed_failure_quartile_proportion": {
+        "monte_carlo_median": 0.71028,
+        "monte_carlo_p025": 0.654206,
+        "monte_carlo_p975": 0.761916
+      }
+    },
+    "36": {
+      "index_episode_retention": {
+        "monte_carlo_median": 0.641828,
+        "monte_carlo_p025": 0.5857,
+        "monte_carlo_p975": 0.675286
+      },
+      "primary_eligible_retention": {
+        "monte_carlo_median": 0.589173,
+        "monte_carlo_p025": 0.534267,
+        "monte_carlo_p975": 0.630799
+      },
+      "conditional_monitoring_indeterminate_among_retained_primary_eligible": {
+        "monte_carlo_median": 0.523011,
+        "monte_carlo_p025": 0.516507,
+        "monte_carlo_p975": 0.529255
+      },
+      "total_phenotype_failure_fixed_reference_denominator": {
+        "monte_carlo_median": 0.717058,
+        "monte_carlo_p025": 0.699898,
+        "monte_carlo_p975": 0.74418
+      },
+      "hospital_raw_vs_thinned_failure_rank_spearman": {
+        "monte_carlo_median": -0.047351,
+        "monte_carlo_p025": -0.130892,
+        "monte_carlo_p975": 0.041495
+      },
+      "hospital_changed_failure_quartile_proportion": {
+        "monte_carlo_median": 0.738318,
+        "monte_carlo_p025": 0.682243,
+        "monte_carlo_p975": 0.785047
+      }
+    },
+    "48": {
+      "index_episode_retention": {
+        "monte_carlo_median": 0.504648,
+        "monte_carlo_p025": 0.445352,
+        "monte_carlo_p975": 0.573802
+      },
+      "primary_eligible_retention": {
+        "monte_carlo_median": 0.441931,
+        "monte_carlo_p025": 0.385792,
+        "monte_carlo_p975": 0.516193
+      },
+      "conditional_monitoring_indeterminate_among_retained_primary_eligible": {
+        "monte_carlo_median": 0.496748,
+        "monte_carlo_p025": 0.459232,
+        "monte_carlo_p975": 0.510881
+      },
+      "total_phenotype_failure_fixed_reference_denominator": {
+        "monte_carlo_median": 0.774566,
+        "monte_carlo_p025": 0.743616,
+        "monte_carlo_p975": 0.806591
+      },
+      "hospital_raw_vs_thinned_failure_rank_spearman": {
+        "monte_carlo_median": -0.045311,
+        "monte_carlo_p025": -0.186991,
+        "monte_carlo_p975": 0.030821
+      },
+      "hospital_changed_failure_quartile_proportion": {
+        "monte_carlo_median": 0.742991,
+        "monte_carlo_p025": 0.672897,
+        "monte_carlo_p975": 0.82243
+      }
+    }
+  },
+  "checks": [
+    {
+      "name": "mimic: categories sum",
+      "status": "PASS",
+      "detail": "10504 = 10504"
+    },
+    {
+      "name": "mimic: all episodes reconcile",
+      "status": "PASS",
+      "detail": "all index episodes equal primary opportunity plus insufficient opportunity"
+    },
+    {
+      "name": "mimic: indeterminate numerator",
+      "status": "PASS",
+      "detail": "2242 = 2242"
+    },
+    {
+      "name": "mimic: identified width",
+      "status": "PASS",
+      "detail": "identified-set width equals classification-indeterminate proportion"
+    },
+    {
+      "name": "mimic: lower bound",
+      "status": "PASS",
+      "detail": "lower bound equals definite-persistent proportion"
+    },
+    {
+      "name": "mimic: upper bound",
+      "status": "PASS",
+      "detail": "upper bound equals one minus definite-transient proportion"
+    },
+    {
+      "name": "mimic: primary/core agreement",
+      "status": "PASS",
+      "detail": "primary categories agree with core-sensitivity source"
+    },
+    {
+      "name": "mimic: stage strata sum",
+      "status": "PASS",
+      "detail": "Stage 1 plus Stage 2/3 equals the primary denominator"
+    },
+    {
+      "name": "mimic: one episode per patient",
+      "status": "PASS",
+      "detail": "deduplicated episode count equals unique-patient count"
+    },
+    {
+      "name": "mimic: feasibility categories sum",
+      "status": "PASS",
+      "detail": "three mutually exclusive feasibility categories reconcile"
+    },
+    {
+      "name": "sicdb: categories sum",
+      "status": "PASS",
+      "detail": "2458 = 2458"
+    },
+    {
+      "name": "sicdb: all episodes reconcile",
+      "status": "PASS",
+      "detail": "all index episodes equal primary opportunity plus insufficient opportunity"
+    },
+    {
+      "name": "sicdb: indeterminate numerator",
+      "status": "PASS",
+      "detail": "781 = 781"
+    },
+    {
+      "name": "sicdb: identified width",
+      "status": "PASS",
+      "detail": "identified-set width equals classification-indeterminate proportion"
+    },
+    {
+      "name": "sicdb: lower bound",
+      "status": "PASS",
+      "detail": "lower bound equals definite-persistent proportion"
+    },
+    {
+      "name": "sicdb: upper bound",
+      "status": "PASS",
+      "detail": "upper bound equals one minus definite-transient proportion"
+    },
+    {
+      "name": "sicdb: primary/core agreement",
+      "status": "PASS",
+      "detail": "primary categories agree with core-sensitivity source"
+    },
+    {
+      "name": "sicdb: stage strata sum",
+      "status": "PASS",
+      "detail": "Stage 1 plus Stage 2/3 equals the primary denominator"
+    },
+    {
+      "name": "sicdb: one episode per patient",
+      "status": "PASS",
+      "detail": "deduplicated episode count equals unique-patient count"
+    },
+    {
+      "name": "sicdb: feasibility categories sum",
+      "status": "PASS",
+      "detail": "three mutually exclusive feasibility categories reconcile"
+    },
+    {
+      "name": "eicu: categories sum",
+      "status": "PASS",
+      "detail": "14599 = 14599"
+    },
+    {
+      "name": "eicu: all episodes reconcile",
+      "status": "PASS",
+      "detail": "all index episodes equal primary opportunity plus insufficient opportunity"
+    },
+    {
+      "name": "eicu: indeterminate numerator",
+      "status": "PASS",
+      "detail": "4497 = 4497"
+    },
+    {
+      "name": "eicu: identified width",
+      "status": "PASS",
+      "detail": "identified-set width equals classification-indeterminate proportion"
+    },
+    {
+      "name": "eicu: lower bound",
+      "status": "PASS",
+      "detail": "lower bound equals definite-persistent proportion"
+    },
+    {
+      "name": "eicu: upper bound",
+      "status": "PASS",
+      "detail": "upper bound equals one minus definite-transient proportion"
+    },
+    {
+      "name": "eicu: primary/core agreement",
+      "status": "PASS",
+      "detail": "primary categories agree with core-sensitivity source"
+    },
+    {
+      "name": "eicu: stage strata sum",
+      "status": "PASS",
+      "detail": "Stage 1 plus Stage 2/3 equals the primary denominator"
+    },
+    {
+      "name": "eicu: one episode per patient",
+      "status": "PASS",
+      "detail": "deduplicated episode count equals unique-patient count"
+    },
+    {
+      "name": "eicu: feasibility categories sum",
+      "status": "PASS",
+      "detail": "three mutually exclusive feasibility categories reconcile"
+    },
+    {
+      "name": "thinning 12h: reference size",
+      "status": "PASS",
+      "detail": "fixed reference n=9,790"
+    },
+    {
+      "name": "thinning 12h: reference categories",
+      "status": "PASS",
+      "detail": "reference categories sum to fixed denominator"
+    },
+    {
+      "name": "thinning 12h: recurrence separation",
+      "status": "PASS",
+      "detail": "later recurrence is detected and reported separately"
+    },
+    {
+      "name": "thinning 24h: reference size",
+      "status": "PASS",
+      "detail": "fixed reference n=9,790"
+    },
+    {
+      "name": "thinning 24h: reference categories",
+      "status": "PASS",
+      "detail": "reference categories sum to fixed denominator"
+    },
+    {
+      "name": "thinning 24h: recurrence separation",
+      "status": "PASS",
+      "detail": "later recurrence is detected and reported separately"
+    },
+    {
+      "name": "thinning 36h: reference size",
+      "status": "PASS",
+      "detail": "fixed reference n=9,790"
+    },
+    {
+      "name": "thinning 36h: reference categories",
+      "status": "PASS",
+      "detail": "reference categories sum to fixed denominator"
+    },
+    {
+      "name": "thinning 36h: recurrence separation",
+      "status": "PASS",
+      "detail": "later recurrence is detected and reported separately"
+    },
+    {
+      "name": "thinning 48h: reference size",
+      "status": "PASS",
+      "detail": "fixed reference n=9,790"
+    },
+    {
+      "name": "thinning 48h: reference categories",
+      "status": "PASS",
+      "detail": "reference categories sum to fixed denominator"
+    },
+    {
+      "name": "thinning 48h: recurrence separation",
+      "status": "PASS",
+      "detail": "later recurrence is detected and reported separately"
+    },
+    {
+      "name": "thinning: total failure gradient",
+      "status": "PASS",
+      "detail": "total failure increases from 12 to 48 h"
+    },
+    {
+      "name": "thinning: index retention gradient",
+      "status": "PASS",
+      "detail": "index-episode retention decreases from 12 to 48 h"
+    }
+  ],
+  "checks_passed": 44,
+  "checks_total": 44
+}

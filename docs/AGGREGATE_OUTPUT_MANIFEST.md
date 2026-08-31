@@ -39,37 +39,36 @@ patient-clustered generalized estimating equation parameters, and standardized
 descriptive retesting probabilities. No inverse-observation weighting result is
 part of the submission freeze.
 
-## Revision audit
+## Version 1.2.0 audit
 
-- `results/v5_revision_output_audit.json`
+- `results/v6_targeted_reanalysis_audit.json`
 
-This file records 47 passed consistency checks. The final submission freeze does
-not include the earlier mortality landmark, inverse-observation-weighting, or
-hospital-ranking outputs.
+This file records 44 passed consistency checks covering distinct time windows,
+SICdb endpoint alignment, true patient clusters, index-episode-anchored
+thinning, flow identities and cross-file agreement. The final submission freeze
+does not include the earlier mortality landmark, inverse-observation-weighting,
+hospital-ranking or unanchored thinning outputs.
 
 ## Episode-continuity sensitivity
 
 - `results/continuity/*_ndt_continuity_gap_sensitivity.json`
-- `results/continuity/ndt_final_gate_audit.json`
-
 These files report only source-level counts and proportions under 24- and
-36-hour maximum observed-positive-chain gaps.
+36-hour maximum unrecovered-state-support gaps.
 
 ## Controlled thinning
 
 - `results/thinning/eicu_v4_controlled_thinning_{12,24,36,48}h.json`
-- `results/thinning/eicu_v4_controlled_thinning_index.json`
-- `results/thinning/eicu_v4_controlled_thinning_selection_rule_sensitivity.json`
+- `results/thinning/controlled_thinning_progress.json`
 
-These files contain Monte Carlo summaries and aggregated transition counts
-over 500 phases. The protected trajectory cache and phase-level files are not
-distributed.
+These files contain index-episode-anchored Monte Carlo summaries and aggregate
+transition counts over 500 phases. Later recurrence cannot substitute for a
+missed index episode. The protected trajectory cache and phase-level files are
+not distributed.
 
 ## Manuscript tables
 
 - `results/tables/Table_1_cohort_and_observation_characteristics.csv`
 - `results/tables/Table_2_primary_persistence_results.csv`
-- `results/tables/Table_S9_episode_continuity_sensitivity.csv`
 
 The output-to-code-to-table mapping is documented in
-`docs/RESULT_PROVENANCE_V1.1.md`.
+`docs/RESULT_PROVENANCE_V1.2.md`.

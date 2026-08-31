@@ -1,9 +1,9 @@
-# NDT final-gate amendment: observed-positive-chain continuity sensitivity
+# NDT final-gate amendment: unrecovered-state continuity sensitivity
 
-Date: 2026-08-30
+Date: 2026-08-31
 
 Status: additional post hoc methodological robustness analysis. This amendment
-does not replace or alter the frozen v4 primary phenotype.
+does not replace or alter the version 1.2.0 primary phenotype.
 
 ## Rationale
 
@@ -11,14 +11,14 @@ The v4 primary analysis uses a prespecified single-episode continuity
 convention: after the first observed creatinine-defined AKI value, the indexed
 episode is considered ongoing until the first observed creatinine value that
 meets the fixed episode-ending recovery rule. Consequently, two AKI-state
-measurements separated by a long unobserved interval could support a definite
+unrecovered measurements separated by a long unobserved interval could support a definite
 persistent classification even though an unobserved recovery followed by a
 recurrent AKI cannot be excluded.
 
 The primary bounds must therefore be described as logical bounds under the
 prespecified episode-continuity convention, not as assumption-free bounds.
 
-## Fixed primary convention
+## Fixed primary convention and follow-up scope
 
 - The AKI-detection baseline remains the rolling 48-hour/7-day baseline.
 - The episode recovery baseline is fixed at the first AKI-positive
@@ -30,20 +30,22 @@ prespecified episode-continuity convention, not as assumption-free bounds.
 - The primary denominator remains first AKI episodes with ICU coverage through
   the first AKI-positive measurement plus 48 hours. Inclusion never requires a
   subsequent creatinine measurement.
+- Index AKI is searched during ICU days 0–7, while recovery follow-up continues
+  from index onset to the end of the database-covered critical-care spell.
 
 ## Additional continuity-support sensitivity
 
 Only episodes classified as definite persistent in the v4 primary analysis
 are reconsidered. For each such episode, the observed creatinine measurements
-at or above the fixed episode recovery threshold are followed from the first
+remaining above the fixed episode recovery threshold are followed from the first
 AKI-positive measurement through the measurement that establishes a minimum
 possible duration greater than 48 hours.
 
 Two maximum-adjacent-gap rules are evaluated separately:
 
-1. no adjacent observed AKI-state creatinine measurements more than 24 hours
+1. no adjacent observed unrecovered creatinine measurements more than 24 hours
    apart;
-2. no adjacent observed AKI-state creatinine measurements more than 36 hours
+2. no adjacent observed unrecovered creatinine measurements more than 36 hours
    apart.
 
 If the chain contains a gap longer than the selected limit, the episode is

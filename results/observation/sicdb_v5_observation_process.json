@@ -1,17 +1,17 @@
 {
   "source": "SICdb v1.0.8",
   "scope": "ICU-only recurrent observation process; patient-clustered GEE; no IPW and no causal monitoring effect.",
-  "opportunities": 42469,
-  "unique_patients": 11783,
-  "continuous_icu_spells": 13412,
+  "opportunities": 41625,
+  "unique_patients": 11229,
+  "continuous_icu_spells": 12692,
   "crude_next_test_within_24h": {
     "no": {
-      "opportunities": 35260,
-      "proportion": 0.701815
+      "opportunities": 34483,
+      "proportion": 0.695618
     },
     "yes": {
-      "opportunities": 7209,
-      "proportion": 0.731863
+      "opportunities": 7142,
+      "proportion": 0.729628
     }
   },
   "patient_clustered_gee": {
@@ -20,53 +20,53 @@
     "effects": [
       {
         "term": "Last creatinine, per source SD",
-        "odds_ratio": 1.117144,
-        "ci95_low": 1.086941,
-        "ci95_high": 1.148187,
+        "odds_ratio": 1.122946,
+        "ci95_low": 1.092437,
+        "ci95_high": 1.154307,
         "p_value": 0.0
       },
       {
         "term": "Change from preceding creatinine, per source SD",
-        "odds_ratio": 1.035675,
-        "ci95_low": 1.011497,
-        "ci95_high": 1.060431,
-        "p_value": 0.0036318947
+        "odds_ratio": 1.037678,
+        "ci95_low": 1.013364,
+        "ci95_high": 1.062577,
+        "p_value": 0.0022333392
       },
       {
         "term": "Current creatinine is AKI-positive versus not AKI-positive",
-        "odds_ratio": 1.027927,
-        "ci95_low": 0.95659,
-        "ci95_high": 1.104584,
-        "p_value": 0.4528961428
+        "odds_ratio": 1.028345,
+        "ci95_low": 0.95714,
+        "ci95_high": 1.104847,
+        "p_value": 0.4451935715
       },
       {
         "term": "ICU day 1 versus day 0",
-        "odds_ratio": 0.77249,
-        "ci95_low": 0.727707,
-        "ci95_high": 0.820028,
-        "p_value": 0.0
+        "odds_ratio": 0.82334,
+        "ci95_low": 0.775442,
+        "ci95_high": 0.874198,
+        "p_value": 2e-10
       },
       {
         "term": "ICU day 2 versus day 0",
-        "odds_ratio": 0.685073,
-        "ci95_low": 0.643111,
-        "ci95_high": 0.729773,
+        "odds_ratio": 0.729682,
+        "ci95_low": 0.684867,
+        "ci95_high": 0.777429,
         "p_value": 0.0
       },
       {
         "term": "ICU day 3-7 versus day 0",
-        "odds_ratio": 0.706788,
-        "ci95_low": 0.671721,
-        "ci95_high": 0.743685,
+        "odds_ratio": 0.755006,
+        "ci95_low": 0.717381,
+        "ci95_high": 0.794603,
         "p_value": 0.0
       }
     ]
   },
   "standardized_retest_probability": {
-    "if_current_creatinine_aki_positive": 0.711642,
-    "if_current_creatinine_not_aki_positive": 0.706,
-    "risk_difference": 0.005642,
-    "risk_ratio": 1.007992,
+    "if_current_creatinine_aki_positive": 0.706304,
+    "if_current_creatinine_not_aki_positive": 0.700509,
+    "risk_difference": 0.005796,
+    "risk_ratio": 1.008274,
     "method": "Marginal standardization over the observed covariate distribution; point estimates are descriptive."
   },
   "interpretation": "Repeat testing was associated with already observed creatinine history. The model cannot reconstruct unmeasured onset or recovery and was not used to correct the primary persistence bounds."

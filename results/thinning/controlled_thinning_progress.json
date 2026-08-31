@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "interval_hours": [
+    12,
+    24,
+    36,
+    48
+  ],
+  "replicates": 500,
+  "reference_episodes": 9790
+}

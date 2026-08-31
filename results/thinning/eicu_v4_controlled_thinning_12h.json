@@ -1,208 +1,221 @@
 {
   "source": "eICU-CRD v2.0",
-  "scope": "Post-result controlled-thinning robustness analysis. The maximally observed trajectory is a measurement-rich reference, not a biological gold standard. No hospital-quality or causal testing-frequency inference is made.",
+  "scope": "Post-result controlled thinning robustness analysis. The reference trajectory is maximally observed, not a biological gold standard. Hospital quantities describe phenotype sensitivity, never care quality.",
   "reference_cohort": {
-    "definition": "Fixed first creatinine-defined AKI episodes with potential ICU coverage through 48 h and at least four observed creatinines from first AKI positivity through 72 h after onset.",
-    "episodes": 9323,
+    "definition": "Fixed first creatinine-defined AKI episodes with potential ICU coverage through 48 h and at least four observed creatinines in the first 72 h.",
+    "episodes": 9790,
     "hospitals": 184,
-    "hospital_count_for_rank_diagnostic": 106,
+    "hospital_count_for_rank_diagnostic": 107,
     "minimum_reference_episodes_per_rank_hospital": 20,
     "reference_categories": {
-      "definite_transient": 3249,
-      "definite_persistent": 3820,
-      "interval_indeterminate": 1933,
-      "right_censored_unresolved": 321
+      "definite_transient": 3352,
+      "definite_persistent": 4113,
+      "interval_indeterminate": 2077,
+      "right_censored_unresolved": 248
     }
   },
   "schedule": {
     "imposed_maximum_sampling_frequency_hours": 12,
     "replicates": 500,
-    "seed": 20260830,
+    "seed": 20260831,
     "random_phase": "One global phase per replicate, sampled uniformly from [0, interval).",
     "selection_rule": "One existing observation closest to each phase-shifted bin centre; no values are imputed."
   },
   "effect_decomposition": {
-    "phenotype_retention": {
-      "monte_carlo_median": 0.934356,
-      "monte_carlo_p025": 0.928993,
-      "monte_carlo_p975": 0.938432
+    "index_episode_retention": {
+      "monte_carlo_median": 0.898519,
+      "monte_carlo_p025": 0.89249,
+      "monte_carlo_p975": 0.904086
     },
     "primary_eligible_retention": {
-      "monte_carlo_median": 0.910597,
-      "monte_carlo_p025": 0.904859,
-      "monte_carlo_p975": 0.91655
+      "monte_carlo_median": 0.886823,
+      "monte_carlo_p025": 0.880388,
+      "monte_carlo_p975": 0.893258
     },
     "conditional_monitoring_indeterminate_among_retained_primary_eligible": {
-      "monte_carlo_median": 0.295345,
-      "monte_carlo_p025": 0.29065,
-      "monte_carlo_p975": 0.302593
+      "monte_carlo_median": 0.286436,
+      "monte_carlo_p025": 0.281953,
+      "monte_carlo_p975": 0.292576
     },
     "total_phenotype_failure_fixed_reference_denominator": {
-      "monte_carlo_median": 0.35761,
-      "monte_carlo_p025": 0.353693,
-      "monte_carlo_p975": 0.36898
+      "monte_carlo_median": 0.366088,
+      "monte_carlo_p025": 0.361083,
+      "monte_carlo_p975": 0.37656
     },
     "hospital_raw_vs_thinned_failure_rank_spearman": {
-      "monte_carlo_median": 0.659108,
-      "monte_carlo_p025": 0.60473,
-      "monte_carlo_p975": 0.694613
+      "monte_carlo_median": 0.630484,
+      "monte_carlo_p025": 0.553146,
+      "monte_carlo_p975": 0.703482
     },
     "hospital_changed_failure_quartile_proportion": {
-      "monte_carlo_median": 0.528302,
-      "monte_carlo_p025": 0.471698,
-      "monte_carlo_p975": 0.59434
+      "monte_carlo_median": 0.53271,
+      "monte_carlo_p025": 0.476636,
+      "monte_carlo_p975": 0.598131
     }
   },
   "transition_matrix": [
     {
       "reference_category": "definite_transient",
-      "thinned_category": "not_detected",
-      "mean_count_per_phase": 500.434,
-      "mean_proportion_within_reference_category": 0.154027
+      "thinned_category": "index_not_detected",
+      "mean_count_per_phase": 517.164,
+      "mean_proportion_within_reference_category": 0.154285
     },
     {
       "reference_category": "definite_transient",
-      "thinned_category": "detected_without_potential_48h_coverage",
-      "mean_count_per_phase": 131.924,
-      "mean_proportion_within_reference_category": 0.040604
+      "thinned_category": "index_not_retained_later_recurrence_detected",
+      "mean_count_per_phase": 347.438,
+      "mean_proportion_within_reference_category": 0.103651
+    },
+    {
+      "reference_category": "definite_transient",
+      "thinned_category": "index_retained_without_potential_48h_coverage",
+      "mean_count_per_phase": 26.326,
+      "mean_proportion_within_reference_category": 0.007854
     },
     {
       "reference_category": "definite_transient",
       "thinned_category": "definite_transient",
-      "mean_count_per_phase": 2261.79,
-      "mean_proportion_within_reference_category": 0.69615
+      "mean_count_per_phase": 2268.586,
+      "mean_proportion_within_reference_category": 0.676786
     },
     {
       "reference_category": "definite_transient",
       "thinned_category": "definite_persistent",
-      "mean_count_per_phase": 125.108,
-      "mean_proportion_within_reference_category": 0.038507
+      "mean_count_per_phase": 43.726,
+      "mean_proportion_within_reference_category": 0.013045
     },
     {
       "reference_category": "definite_transient",
       "thinned_category": "interval_indeterminate",
-      "mean_count_per_phase": 174.484,
-      "mean_proportion_within_reference_category": 0.053704
+      "mean_count_per_phase": 143.986,
+      "mean_proportion_within_reference_category": 0.042955
     },
     {
       "reference_category": "definite_transient",
       "thinned_category": "right_censored_unresolved",
-      "mean_count_per_phase": 55.26,
-      "mean_proportion_within_reference_category": 0.017008
+      "mean_count_per_phase": 4.774,
+      "mean_proportion_within_reference_category": 0.001424
     },
     {
       "reference_category": "definite_persistent",
-      "thinned_category": "not_detected",
-      "mean_count_per_phase": 50.598,
-      "mean_proportion_within_reference_category": 0.013246
+      "thinned_category": "index_not_detected",
+      "mean_count_per_phase": 56.35,
+      "mean_proportion_within_reference_category": 0.0137
     },
     {
       "reference_category": "definite_persistent",
-      "thinned_category": "detected_without_potential_48h_coverage",
-      "mean_count_per_phase": 34.43,
-      "mean_proportion_within_reference_category": 0.009013
+      "thinned_category": "index_not_retained_later_recurrence_detected",
+      "mean_count_per_phase": 0.632,
+      "mean_proportion_within_reference_category": 0.000154
+    },
+    {
+      "reference_category": "definite_persistent",
+      "thinned_category": "index_retained_without_potential_48h_coverage",
+      "mean_count_per_phase": 34.376,
+      "mean_proportion_within_reference_category": 0.008358
     },
     {
       "reference_category": "definite_persistent",
       "thinned_category": "definite_transient",
-      "mean_count_per_phase": 43.506,
-      "mean_proportion_within_reference_category": 0.011389
+      "mean_count_per_phase": 44.23,
+      "mean_proportion_within_reference_category": 0.010754
     },
     {
       "reference_category": "definite_persistent",
       "thinned_category": "definite_persistent",
-      "mean_count_per_phase": 3485.37,
-      "mean_proportion_within_reference_category": 0.912401
+      "mean_count_per_phase": 3774.976,
+      "mean_proportion_within_reference_category": 0.917816
     },
     {
       "reference_category": "definite_persistent",
       "thinned_category": "interval_indeterminate",
-      "mean_count_per_phase": 125.546,
-      "mean_proportion_within_reference_category": 0.032865
+      "mean_count_per_phase": 131.158,
+      "mean_proportion_within_reference_category": 0.031889
     },
     {
       "reference_category": "definite_persistent",
       "thinned_category": "right_censored_unresolved",
-      "mean_count_per_phase": 80.55,
-      "mean_proportion_within_reference_category": 0.021086
+      "mean_count_per_phase": 71.278,
+      "mean_proportion_within_reference_category": 0.01733
     },
     {
       "reference_category": "interval_indeterminate",
-      "thinned_category": "not_detected",
-      "mean_count_per_phase": 55.94,
-      "mean_proportion_within_reference_category": 0.028939
+      "thinned_category": "index_not_detected",
+      "mean_count_per_phase": 59.492,
+      "mean_proportion_within_reference_category": 0.028643
     },
     {
       "reference_category": "interval_indeterminate",
-      "thinned_category": "detected_without_potential_48h_coverage",
-      "mean_count_per_phase": 12.916,
-      "mean_proportion_within_reference_category": 0.006682
+      "thinned_category": "index_not_retained_later_recurrence_detected",
+      "mean_count_per_phase": 6.024,
+      "mean_proportion_within_reference_category": 0.0029
+    },
+    {
+      "reference_category": "interval_indeterminate",
+      "thinned_category": "index_retained_without_potential_48h_coverage",
+      "mean_count_per_phase": 10.63,
+      "mean_proportion_within_reference_category": 0.005118
     },
     {
       "reference_category": "interval_indeterminate",
       "thinned_category": "definite_transient",
-      "mean_count_per_phase": 50.448,
-      "mean_proportion_within_reference_category": 0.026098
+      "mean_count_per_phase": 50.468,
+      "mean_proportion_within_reference_category": 0.024299
     },
     {
       "reference_category": "interval_indeterminate",
       "thinned_category": "definite_persistent",
-      "mean_count_per_phase": 12.478,
-      "mean_proportion_within_reference_category": 0.006455
+      "mean_count_per_phase": 13.912,
+      "mean_proportion_within_reference_category": 0.006698
     },
     {
       "reference_category": "interval_indeterminate",
       "thinned_category": "interval_indeterminate",
-      "mean_count_per_phase": 1796.86,
-      "mean_proportion_within_reference_category": 0.929571
+      "mean_count_per_phase": 1934.22,
+      "mean_proportion_within_reference_category": 0.931257
     },
     {
       "reference_category": "interval_indeterminate",
       "thinned_category": "right_censored_unresolved",
-      "mean_count_per_phase": 4.358,
-      "mean_proportion_within_reference_category": 0.002255
+      "mean_count_per_phase": 2.254,
+      "mean_proportion_within_reference_category": 0.001085
     },
     {
       "reference_category": "right_censored_unresolved",
-      "thinned_category": "not_detected",
-      "mean_count_per_phase": 5.584,
-      "mean_proportion_within_reference_category": 0.017396
+      "thinned_category": "index_not_detected",
+      "mean_count_per_phase": 4.502,
+      "mean_proportion_within_reference_category": 0.018153
     },
     {
       "reference_category": "right_censored_unresolved",
-      "thinned_category": "detected_without_potential_48h_coverage",
-      "mean_count_per_phase": 40.356,
-      "mean_proportion_within_reference_category": 0.12572
+      "thinned_category": "index_retained_without_potential_48h_coverage",
+      "mean_count_per_phase": 40.304,
+      "mean_proportion_within_reference_category": 0.162516
     },
     {
       "reference_category": "right_censored_unresolved",
       "thinned_category": "definite_transient",
-      "mean_count_per_phase": 1.696,
-      "mean_proportion_within_reference_category": 0.005283
-    },
-    {
-      "reference_category": "right_censored_unresolved",
-      "thinned_category": "definite_persistent",
-      "mean_count_per_phase": 0.014,
-      "mean_proportion_within_reference_category": 4.4e-05
+      "mean_count_per_phase": 1.268,
+      "mean_proportion_within_reference_category": 0.005113
     },
     {
       "reference_category": "right_censored_unresolved",
       "thinned_category": "interval_indeterminate",
-      "mean_count_per_phase": 0.924,
-      "mean_proportion_within_reference_category": 0.002879
+      "mean_count_per_phase": 0.624,
+      "mean_proportion_within_reference_category": 0.002516
     },
     {
       "reference_category": "right_censored_unresolved",
       "thinned_category": "right_censored_unresolved",
-      "mean_count_per_phase": 272.426,
-      "mean_proportion_within_reference_category": 0.848679
+      "mean_count_per_phase": 201.302,
+      "mean_proportion_within_reference_category": 0.811702
     }
   ],
   "interpretation": {
-    "phenotype_retention": "Reference AKI episodes still detected as AKI after thinning. It is a retention measure, not biological sensitivity.",
-    "conditional_monitoring_indeterminate": "Indeterminate proportion only among thinned episodes still detected as AKI and retaining potential 48-h ICU coverage.",
-    "total_phenotype_failure": "Fixed-reference denominator: not detected, detected after losing potential 48-h coverage, or detected but monitoring-indeterminate.",
-    "hospital_rank": "Raw-versus-thinned failure-rate ranks are an unshrunk Monte Carlo sensitivity diagnostic only. The separate hierarchical model governs the hospital-comparability inference."
+    "index_episode_retention": "Fixed reference index-AKI episodes still identified as the same episode after thinning; later recurrent AKI cannot substitute for a missed index episode.",
+    "conditional_monitoring_indeterminate": "Indeterminate proportion only among thinned episodes that remain AKI and retain potential 48-h ICU coverage.",
+    "total_phenotype_failure": "Fixed-reference denominator: index episode not detected, only a later recurrence detected, index detected after losing potential 48-h coverage, or index detected but monitoring-indeterminate.",
+    "episode_matching": "The thinned onset interval had to overlap the reference onset interval or the thinned first positive had to precede the reference observed recovery; later recurrence was reported separately.",
+    "hospital_rank": "Raw-versus-thinned failure-rate ranks are a Monte Carlo sensitivity diagnostic. They are not hospital performance ranks and are not shrinkage-adjusted."
   }
 }

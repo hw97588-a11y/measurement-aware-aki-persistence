@@ -5,73 +5,73 @@
   "sensitivity_interpretation": "A long gap does not prove recovery; it removes continuity support for the definite-persistent lower bound under the selected maximum-gap rule.",
   "primary_48h_icu_coverage_denominator": 10504,
   "original_categories": {
-    "definite_transient": 3859,
-    "definite_persistent": 4022,
-    "interval_indeterminate": 1473,
-    "right_censored_unresolved": 1150
+    "definite_transient": 3932,
+    "definite_persistent": 4330,
+    "interval_indeterminate": 1556,
+    "right_censored_unresolved": 686
   },
   "original_persistent_identified_set": {
-    "lower_definite_persistent": 0.382902,
-    "upper_not_definite_transient": 0.632616,
-    "width": 0.249714
+    "lower_definite_persistent": 0.412224,
+    "upper_not_definite_transient": 0.625666,
+    "width": 0.213442
   },
   "definite_persistent_chain_diagnostics": {
-    "episodes": 4022,
-    "observed_state_measurements_median": 8.0,
+    "episodes": 4330,
+    "observed_state_measurements_median": 9.0,
     "observed_state_measurements_p25_p75": [
       6.0,
-      12.0
+      15.0
     ],
-    "maximum_adjacent_gap_hours_median": 22.85,
+    "maximum_adjacent_gap_hours_median": 23.9,
     "maximum_adjacent_gap_hours_p25_p75": [
-      14.604,
-      24.767
+      15.383,
+      25.25
     ],
-    "maximum_adjacent_gap_hours_p90": 25.933
+    "maximum_adjacent_gap_hours_p90": 26.383
   },
   "sensitivity_results": {
     "max_adjacent_gap_24h": {
-      "continuity_supported_definite_persistent": 2474,
+      "continuity_supported_definite_persistent": 2243,
       "continuity_gap_indeterminate": {
-        "n": 1548,
+        "n": 2087,
         "denominator": 10504,
-        "proportion": 0.14737,
-        "ci95_low": 0.14072,
-        "ci95_high": 0.15428
+        "proportion": 0.19869,
+        "ci95_low": 0.19117,
+        "ci95_high": 0.20643
       },
       "total_classification_indeterminate_after_reclassification": {
-        "n": 4171,
+        "n": 4329,
         "denominator": 10504,
-        "proportion": 0.39709,
-        "ci95_low": 0.38777,
-        "ci95_high": 0.40648
+        "proportion": 0.41213,
+        "ci95_low": 0.40275,
+        "ci95_high": 0.42157
       },
       "persistent_identified_set": {
-        "lower_continuity_supported_persistent": 0.235529,
-        "upper_not_definite_transient_unchanged": 0.632616,
-        "width": 0.397087
+        "lower_continuity_supported_persistent": 0.213538,
+        "upper_not_definite_transient_unchanged": 0.625666,
+        "width": 0.412129
       }
     },
     "max_adjacent_gap_36h": {
-      "continuity_supported_definite_persistent": 4004,
+      "continuity_supported_definite_persistent": 4292,
       "continuity_gap_indeterminate": {
-        "n": 18,
+        "n": 38,
         "denominator": 10504,
-        "proportion": 0.00171,
-        "ci95_low": 0.00108,
-        "ci95_high": 0.00271
+        "proportion": 0.00362,
+        "ci95_low": 0.00264,
+        "ci95_high": 0.00496
       },
       "total_classification_indeterminate_after_reclassification": {
-        "n": 2641,
+        "n": 2280,
         "denominator": 10504,
-        "proportion": 0.25143,
-        "ci95_low": 0.24322,
-        "ci95_high": 0.25981
+        "proportion": 0.21706,
+        "ci95_low": 0.20928,
+        "ci95_high": 0.22505
       },
       "persistent_identified_set": {
-        "lower_continuity_supported_persistent": 0.381188,
-        "upper_not_definite_transient_unchanged": 0.632616,
-        "width": 0.251428
+        "lower_continuity_supported_persistent": 0.408606,
+        "upper_not_definite_transient_unchanged": 0.625666,
+        "width": 0.21706
       }
     }
   },

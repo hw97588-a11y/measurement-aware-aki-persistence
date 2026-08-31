@@ -1,11 +1,13 @@
 Characteristic,MIMIC-IV v3.1,SICdb v1.0.8,eICU-CRD v2.0
-Adult first continuous intensive care spells n,85122,27223,165726
-Unique patients in source spells n,65269,21442,138811
-First observed transition-defined AKI episodes n,18001,3867,26567
-Unique patients with transition-defined episode n,15808,3572,24498
-Structurally censored before 48-hour intensive care coverage n,7497,1395,11968
-Primary 48-hour observation-opportunity denominator n,10504,2472,14599
-Unique patients in primary denominator n,9650,2350,13896
-Onset-interval width median hours,14.033,23.767,22.833
-Recovery-interval width among episodes with observed recovery median hours,22.717,24.000,24.067
-Standardized 24-hour retest probability when current value was AKI-positive percent,92.9,71.2,77.9
+Eligible episodes n,10504,2458,14599
+Unique patients n,9650,2338,13896
+Age median (IQR) years,66 (55–76),70 (65–80),66 (55–75)
+Female n (%),4188 (39.9),Not available,6115 (41.9)
+Episode baseline creatinine median (IQR) mg/dL,1.20 (0.80–2.00),1.07 (0.80–1.50),1.23 (0.80–2.28)
+Initial Stage 1 AKI n (%),8422 (80.2),2140 (87.1),11213 (76.8)
+Initial Stage 2/3 AKI n (%),2082 (19.8),318 (12.9),3386 (23.2)
+Onset intensive care day median (IQR),1.06 (0.52–2.06),1.19 (0.61–2.27),0.98 (0.42–1.91)
+Database-covered critical-care spell median (IQR) hours,166.5 (104.6–284.4),186.3 (115.0–341.4),151.7 (99.7–251.1)
+Creatinine measurements per episode trajectory median (IQR),13 (8–23),9 (6–15),9 (5–15)
+Adjacent creatinine interval median (IQR) hours,11.0 (6.5–15.0),24.0 (23.5–24.1),18.9 (8.0–24.0)
+Actual retest within 24 hours after first positivity n (%),9537 (90.8),1778 (72.3),10729 (73.5)

@@ -22,7 +22,16 @@ import numpy as np
 from scipy.stats import rankdata, spearmanr
 
 from interval_aki_v4_engine import M72, UNRESOLVED, classify_first_episode
-from run_interval_aki_primary import EICU, M7D, Spell, as_float, deduplicate, is_adult, valid_creatinine
+from run_interval_aki_primary import (
+    EICU,
+    M7D,
+    Spell,
+    as_float,
+    deduplicate,
+    eicu_age_years,
+    require_source_path,
+    valid_creatinine,
+)
 
 
 CATEGORIES = ["definite_transient", "definite_persistent", "interval_indeterminate", "right_censored_unresolved"]
@@ -38,6 +47,28 @@ def thin(values: list[tuple[float, float]], phase: float, interval: float) -> li
         if index not in selected or candidate < selected[index]:
             selected[index] = candidate
     return [(time, value) for _, time, value in sorted(selected.values(), key=lambda row: row[1])]
+
+
+def phase_key(identifier: str, spell: Spell, phase_mode: str) -> str:
+    """Return the unit assigned a shared observation-grid phase."""
+    if phase_mode == "global":
+        return "__global_phase__"
+    if phase_mode == "patient-specific":
+        return str(spell.extra.get("uniquepid") or spell.extra.get("cluster_id") or identifier)
+    raise ValueError(f"Unknown phase mode: {phase_mode}")
+
+
+def draw_phases_by_identifier(
+    identifiers: list[str],
+    spells: dict[str, Spell],
+    rng: np.random.Generator,
+    interval: float,
+    phase_mode: str,
+) -> tuple[dict[str, float], int]:
+    """Draw one phase per assignment unit and map it to every episode."""
+    keys = {identifier: phase_key(identifier, spells[identifier], phase_mode) for identifier in identifiers}
+    phase_by_key = {key: float(rng.uniform(0, interval)) for key in sorted(set(keys.values()))}
+    return ({identifier: phase_by_key[key] for identifier, key in keys.items()}, len(phase_by_key))
 
 
 def percentile_summary(values: list[float]) -> dict[str, float]:
@@ -62,10 +93,12 @@ def fast_eicu_source() -> tuple[str, dict[str, Spell], dict[str, list[tuple[floa
     the broad text filter, after which Python validates the 1.28M candidate
     creatinine records using the same units and time rules as the v4 loader.
     """
+    source_directory = require_source_path(EICU, "EICU_CRD_PATH")
     by_health: dict[str, list[tuple[float, float, float, str, str, str, float | None, str, str, float | None, str]]] = defaultdict(list)
-    with gzip.open(EICU / "patient.csv.gz", "rt", encoding="utf-8", errors="replace", newline="") as handle:
+    with gzip.open(source_directory / "patient.csv.gz", "rt", encoding="utf-8", errors="replace", newline="") as handle:
         for row in csv.DictReader(handle):
-            if not is_adult(row["age"]):
+            age = eicu_age_years(row["age"])
+            if age is None or age < 18:
                 continue
             hospital_offset, unit_end = as_float(row["hospitaladmitoffset"]), as_float(row["unitdischargeoffset"])
             if hospital_offset is None or unit_end is None or unit_end <= 0:
@@ -73,7 +106,7 @@ def fast_eicu_source() -> tuple[str, dict[str, Spell], dict[str, list[tuple[floa
             start = -hospital_offset
             by_health[row["patienthealthsystemstayid"]].append((
                 start, start + unit_end, as_float(row["unitvisitnumber"]) or 0, row["patientunitstayid"], row["hospitalid"],
-                row["uniquepid"], as_float(row["age"]), row["gender"], row["unitadmitsource"], as_float(row["hospitaldischargeoffset"]), row["hospitaldischargestatus"],
+                row["uniquepid"], age, row["gender"], row["unitadmitsource"], as_float(row["hospitaldischargeoffset"]), row["hospitaldischargestatus"],
             ))
     spells: dict[str, Spell] = {}
     unit_mapping: dict[str, tuple[str, float]] = {}
@@ -104,7 +137,7 @@ def fast_eicu_source() -> tuple[str, dict[str, Spell], dict[str, list[tuple[floa
                 unit_mapping[stay] = (health, unit_start - first_start)
     raw_units: dict[str, Counter] = defaultdict(Counter)
     labs: dict[str, list[tuple[float, float]]] = defaultdict(list)
-    gzip_process = subprocess.Popen(["gzip", "-dc", str(EICU / "lab.csv.gz")], stdout=subprocess.PIPE)
+    gzip_process = subprocess.Popen(["gzip", "-dc", str(source_directory / "lab.csv.gz")], stdout=subprocess.PIPE)
     if gzip_process.stdout is None:
         raise RuntimeError("Cannot start gzip lab stream")
     filter_process = subprocess.Popen(["rg", "-i", ",1,creatinine,"], stdin=gzip_process.stdout, stdout=subprocess.PIPE)
@@ -178,6 +211,34 @@ def index_episode_match_state(original, scheduled) -> str:
     return "index_not_retained_later_recurrence_detected"
 
 
+def global_phase_comparison(
+    target: Path,
+    effect_decomposition: dict[str, dict[str, float]],
+) -> dict[str, object] | None:
+    """Compare descriptive medians from completed global-phase outputs."""
+    if not target.exists():
+        return None
+    global_output = json.loads(target.read_text(encoding="utf-8"))
+    global_effects = global_output.get("effect_decomposition", {})
+    comparison = {}
+    for name, patient_specific in effect_decomposition.items():
+        global_metric = global_effects.get(name)
+        if global_metric is None:
+            continue
+        comparison[name] = {
+            "patient_specific_phase_median": patient_specific["monte_carlo_median"],
+            "global_phase_median": global_metric["monte_carlo_median"],
+            "patient_specific_minus_global_median": round(
+                patient_specific["monte_carlo_median"] - global_metric["monte_carlo_median"], 6
+            ),
+        }
+    return {
+        "global_phase_file": str(target),
+        "comparison_type": "Descriptive comparison of separate Monte Carlo medians; not a paired inferential contrast.",
+        "metrics": comparison,
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -185,6 +246,17 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=20260830)
     parser.add_argument("--interval-hours", type=int, nargs="+", default=[12, 24, 36, 48])
     parser.add_argument("--hospital-minimum-reference-episodes", type=int, default=20)
+    parser.add_argument(
+        "--phase-mode",
+        choices=["global", "patient-specific"],
+        default="global",
+        help="Assign one phase per replicate (global) or independently per unique patient within each replicate.",
+    )
+    parser.add_argument(
+        "--global-reference-dir",
+        type=Path,
+        help="Optional directory containing completed global-phase JSON outputs for descriptive median comparisons.",
+    )
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
     progress_path = args.output_dir / "controlled_thinning_progress.json"
@@ -207,20 +279,39 @@ def main() -> None:
     rng = np.random.default_rng(args.seed)
     progress_path.write_text(json.dumps({"status": "reference_fixed", "episodes": len(reference), "hospitals": len(by_hospital), "rank_hospitals": len(eligible_hospitals)}, indent=2) + "\n")
 
+    reference_identifiers = sorted(reference)
+    reference_phase_units = {
+        phase_key(identifier, spells[identifier], args.phase_mode)
+        for identifier in reference_identifiers
+    }
+    phase_description = (
+        "One global phase per replicate, sampled uniformly from [0, interval)."
+        if args.phase_mode == "global"
+        else "One phase per de-identified unique patient within each replicate, independently sampled uniformly from [0, interval); repeated hospital stays from the same patient share that replicate phase."
+    )
+    output_index = []
+
     for hours in args.interval_hours:
         interval = hours * 60
         target = args.output_dir / f"eicu_v4_controlled_thinning_{hours}h.json"
         if target.exists():
             raise FileExistsError(f"Refusing to overwrite {target}")
-        print(f"Running {args.replicates} random phases at {hours} h...", flush=True)
+        print(f"Running {args.replicates} {args.phase_mode} random-phase replicates at {hours} h...", flush=True)
         per_phase: dict[str, list[float]] = defaultdict(list)
         transition = Counter()
-        phases = rng.uniform(0, interval, args.replicates)
-        for replicate, phase in enumerate(phases, start=1):
+        for replicate in range(1, args.replicates + 1):
+            phases_by_identifier, n_phase_units = draw_phases_by_identifier(
+                reference_identifiers, spells, rng, interval, args.phase_mode,
+            )
             counts = Counter()
             hospital_failure = np.zeros(len(eligible_hospitals), dtype=float)
-            for identifier, original in reference.items():
-                scheduled = classify_first_episode(source, spells[identifier], thin(labs.get(identifier, []), float(phase), interval))
+            for identifier in reference_identifiers:
+                original = reference[identifier]
+                scheduled = classify_first_episode(
+                    source,
+                    spells[identifier],
+                    thin(labs.get(identifier, []), phases_by_identifier[identifier], interval),
+                )
                 ref_category = original.category
                 hospital = str(original.hospital_id)
                 match_state = index_episode_match_state(original, scheduled)
@@ -263,6 +354,7 @@ def main() -> None:
                 progress_path.write_text(json.dumps({
                     "status": "running", "interval_hours": hours, "completed_replicates": replicate,
                     "replicates": args.replicates, "reference_episodes": len(reference),
+                    "phase_mode": args.phase_mode, "phase_assignment_units": n_phase_units,
                 }, indent=2) + "\n")
         transition_rows = []
         state_order = [
@@ -281,6 +373,15 @@ def main() -> None:
                         "mean_count_per_phase": round(count / args.replicates, 3),
                         "mean_proportion_within_reference_category": round(count / (args.replicates * reference_counts[ref_category]), 6),
                     })
+        effects = {name: percentile_summary(values) for name, values in per_phase.items()}
+        global_comparison = (
+            global_phase_comparison(
+                args.global_reference_dir / f"eicu_v4_controlled_thinning_{hours}h.json",
+                effects,
+            )
+            if args.phase_mode == "patient-specific" and args.global_reference_dir is not None
+            else None
+        )
         output = {
             "source": source,
             "scope": "Post-result controlled thinning robustness analysis. The reference trajectory is maximally observed, not a biological gold standard. Hospital quantities describe phenotype sensitivity, never care quality.",
@@ -289,15 +390,18 @@ def main() -> None:
                 "episodes": len(reference), "hospitals": len(by_hospital),
                 "hospital_count_for_rank_diagnostic": len(eligible_hospitals),
                 "minimum_reference_episodes_per_rank_hospital": args.hospital_minimum_reference_episodes,
+                "unique_patients": len({str(spells[identifier].extra.get("uniquepid")) for identifier in reference_identifiers}),
                 "reference_categories": dict(reference_counts),
             },
             "schedule": {
                 "imposed_maximum_sampling_frequency_hours": hours,
                 "replicates": args.replicates, "seed": args.seed,
-                "random_phase": "One global phase per replicate, sampled uniformly from [0, interval).",
+                "phase_mode": args.phase_mode,
+                "phase_assignment_units_per_replicate": len(reference_phase_units),
+                "random_phase": phase_description,
                 "selection_rule": "One existing observation closest to each phase-shifted bin centre; no values are imputed.",
             },
-            "effect_decomposition": {name: percentile_summary(values) for name, values in per_phase.items()},
+            "effect_decomposition": effects,
             "transition_matrix": transition_rows,
             "interpretation": {
                 "index_episode_retention": "Fixed reference index-AKI episodes still identified as the same episode after thinning; later recurrent AKI cannot substitute for a missed index episode.",
@@ -307,9 +411,24 @@ def main() -> None:
                 "hospital_rank": "Raw-versus-thinned failure-rate ranks are a Monte Carlo sensitivity diagnostic. They are not hospital performance ranks and are not shrinkage-adjusted.",
             },
         }
+        if global_comparison is not None:
+            output["comparison_to_global_phase"] = global_comparison
         target.write_text(json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        output_index.append({"hours": hours, "file": target.name, **{name: values["monte_carlo_median"] for name, values in effects.items()}})
         print(f"Finished {hours} h: {target}", flush=True)
-    progress_path.write_text(json.dumps({"status": "complete", "interval_hours": args.interval_hours, "replicates": args.replicates, "reference_episodes": len(reference)}, indent=2) + "\n")
+    index = {
+        "source": source,
+        "scope": "Patient-specific-phase controlled-thinning sensitivity using the fixed reference index-AKI cohort.",
+        "phase_mode": args.phase_mode,
+        "replicates": args.replicates,
+        "seed": args.seed,
+        "schedules": output_index,
+    }
+    index_path = args.output_dir / "eicu_v4_controlled_thinning_index.json"
+    if index_path.exists():
+        raise FileExistsError(f"Refusing to overwrite {index_path}")
+    index_path.write_text(json.dumps(index, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    progress_path.write_text(json.dumps({"status": "complete", "interval_hours": args.interval_hours, "replicates": args.replicates, "reference_episodes": len(reference), "phase_mode": args.phase_mode}, indent=2) + "\n")
 
 
 if __name__ == "__main__":

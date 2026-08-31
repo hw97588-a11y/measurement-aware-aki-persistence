@@ -27,7 +27,7 @@ from interval_aki_v4_engine import (
     load_source,
 )
 from run_interval_aki_primary import M7D, Spell, deduplicate, load_mimic
-from run_mimic_baseline_sensitivity import historical_baselines
+from mimic_history_helper import historical_baselines
 from run_v4_primary_inference import (
     _cluster_bootstrap,
     _two_stage_hospital_patient_bootstrap,
@@ -127,6 +127,21 @@ def _median_iqr(values: list[float]) -> dict[str, float | int | None]:
     }
 
 
+def _age_group(age: float | None) -> str:
+    """Return a reporting category that preserves source top-coding."""
+    if age is None:
+        return "Unknown"
+    if age < 65:
+        return "<65"
+    if age < 75:
+        return "65-74"
+    if age < 85:
+        return "75-84"
+    if age < 90:
+        return "85-89"
+    return ">=90"
+
+
 def _primary_characteristics(
     spells: dict[str, Spell],
     labs: dict[str, list[tuple[float, float]]],
@@ -151,7 +166,8 @@ def _primary_characteristics(
     return {
         "episodes": len(primary),
         "unique_patients": len({episode.cluster_id for episode in primary.values()}),
-        "age_years_or_source_group_midpoint": _median_iqr([float(value) for value in ages]),
+        "age_years_or_top_coded_lower_bound": _median_iqr([float(value) for value in ages]),
+        "age_group_distribution": dict(Counter(_age_group(episode.age) for episode in primary.values())),
         "sex": dict(Counter((episode.sex or "Unknown") for episode in primary.values())),
         "admission_type_top10": dict(Counter((episode.admission_type or "Unknown") for episode in primary.values()).most_common(10)),
         "baseline_creatinine_mg_dl": _median_iqr(baselines),

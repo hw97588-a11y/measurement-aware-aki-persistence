@@ -3,10 +3,19 @@
 from __future__ import annotations
 
 import unittest
+from datetime import datetime
+
+import numpy as np
 
 from interval_aki_v4_engine import M48, classify_first_episode
-from run_interval_aki_primary import Spell, sicdb_icu_covered_end_minutes
-from run_v4_controlled_thinning import index_episode_match_state
+from run_interval_aki_primary import (
+    Spell,
+    eicu_age_years,
+    mimic_admission_age,
+    sicdb_icu_covered_end_minutes,
+    sicdb_sex,
+)
+from run_v4_controlled_thinning import draw_phases_by_identifier, index_episode_match_state
 
 
 def spell(end_minutes: float = 7 * 24 * 60) -> Spell:
@@ -116,6 +125,23 @@ class IntervalAkiV4Tests(unittest.TestCase):
         self.assertEqual(sicdb_icu_covered_end_minutes(10 * 3600, 2 * 3600), 8 * 60)
         self.assertIsNone(sicdb_icu_covered_end_minutes(2 * 3600, 2 * 3600))
 
+    def test_mimic_admission_age_uses_anchor_year_offset(self):
+        self.assertEqual(mimic_admission_age("17", "2200", datetime(2202, 1, 1)), 19.0)
+        self.assertEqual(mimic_admission_age("52", "2180", datetime(2180, 5, 6)), 52.0)
+        self.assertIsNone(mimic_admission_age("invalid", "2180", datetime(2180, 5, 6)))
+
+    def test_eicu_protected_age_is_retained_as_a_top_coded_lower_bound(self):
+        self.assertEqual(eicu_age_years("> 89"), 90.0)
+        self.assertEqual(eicu_age_years(">89"), 90.0)
+        self.assertEqual(eicu_age_years("67"), 67.0)
+        self.assertIsNone(eicu_age_years("unknown"))
+
+    def test_sicdb_documented_sex_reference_mapping(self):
+        self.assertEqual(sicdb_sex("735"), "Male")
+        self.assertEqual(sicdb_sex("736"), "Female")
+        self.assertEqual(sicdb_sex("737"), "Unknown")
+        self.assertEqual(sicdb_sex(""), "Unknown")
+
     def test_later_recurrence_cannot_replace_missed_index_episode(self):
         original = self.classify([
             (0, 1.0), (60, 1.5), (12 * 60, 1.0),
@@ -129,6 +155,30 @@ class IntervalAkiV4Tests(unittest.TestCase):
             index_episode_match_state(original, scheduled),
             "index_not_retained_later_recurrence_detected",
         )
+
+    def test_patient_specific_phase_is_shared_within_patient_only(self):
+        spells = {
+            "stay-a": Spell("stay-a", 7 * 24 * 60, extra={"uniquepid": "patient-1"}),
+            "stay-b": Spell("stay-b", 7 * 24 * 60, extra={"uniquepid": "patient-1"}),
+            "stay-c": Spell("stay-c", 7 * 24 * 60, extra={"uniquepid": "patient-2"}),
+        }
+        phases, units = draw_phases_by_identifier(
+            ["stay-a", "stay-b", "stay-c"], spells, np.random.default_rng(123), 24 * 60, "patient-specific",
+        )
+        self.assertEqual(units, 2)
+        self.assertEqual(phases["stay-a"], phases["stay-b"])
+        self.assertNotEqual(phases["stay-a"], phases["stay-c"])
+
+    def test_global_phase_is_shared_across_reference_episodes(self):
+        spells = {
+            "stay-a": Spell("stay-a", 7 * 24 * 60, extra={"uniquepid": "patient-1"}),
+            "stay-b": Spell("stay-b", 7 * 24 * 60, extra={"uniquepid": "patient-2"}),
+        }
+        phases, units = draw_phases_by_identifier(
+            ["stay-a", "stay-b"], spells, np.random.default_rng(123), 24 * 60, "global",
+        )
+        self.assertEqual(units, 1)
+        self.assertEqual(phases["stay-a"], phases["stay-b"])
 
 
 if __name__ == "__main__":

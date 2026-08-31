@@ -14,6 +14,7 @@ import gzip
 import io
 import json
 import math
+import os
 import statistics
 import zipfile
 from collections import Counter, defaultdict
@@ -22,13 +23,39 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 
-MIMIC = Path("/Volumes/T9/重症/mimic-iv-3.1.zip")
-EICU = Path("/Volumes/T9/重症/eicu数据库/EICU 2.0数据")
-SICDB = Path(
-    "/Volumes/T9/重症/SICdb数据库/"
-    "salzburg-intensive-care-database-sicdb-a-freely-accessible-intensive-care-database-1.0.8.rar"
+def _configured_path(environment_variable: str) -> Path | None:
+    """Return an optional user-supplied data path without embedding local paths."""
+    value = os.environ.get(environment_variable)
+    return Path(value).expanduser() if value else None
+
+
+def require_source_path(configured: Path | None, environment_variable: str) -> Path:
+    """Resolve and validate a protected source path when a loader is called.
+
+    Resolution is deliberately lazy so that ``--help``, imports and synthetic
+    tests run without access to restricted data.  It also keeps author-local
+    mount points out of the public source tree.
+    """
+    candidate = configured or _configured_path(environment_variable)
+    if candidate is None:
+        raise FileNotFoundError(
+            f"{environment_variable} is not set. Set it to the locally authorised "
+            "source path before running an analysis script."
+        )
+    if not candidate.exists():
+        raise FileNotFoundError(
+            f"{environment_variable} points to a path that does not exist: {candidate}"
+        )
+    return candidate
+
+
+MIMIC = _configured_path("MIMIC_IV_PATH")
+EICU = _configured_path("EICU_CRD_PATH")
+SICDB = _configured_path("SICDB_PATH")
+SICDB_MEMBER_ROOT = os.environ.get(
+    "SICDB_MEMBER_ROOT",
+    "salzburg-intensive-care-database-sicdb-a-freely-accessible-intensive-care-database-1.0.8",
 )
-SICDB_MEMBER_ROOT = "salzburg-intensive-care-database-sicdb-a-freely-accessible-intensive-care-database-1.0.8"
 
 M48 = 48 * 60
 M72 = 72 * 60
@@ -48,6 +75,40 @@ def as_datetime(value: str) -> datetime | None:
         return datetime.fromisoformat(value)
     except (TypeError, ValueError):
         return None
+
+
+def mimic_admission_age(
+    anchor_age: object,
+    anchor_year: object,
+    admission_time: datetime,
+) -> float | None:
+    """Return MIMIC-IV age at admission from its anchor variables."""
+    age = as_float(anchor_age)
+    year = as_float(anchor_year)
+    if age is None or year is None or not year.is_integer():
+        return None
+    return age + (admission_time.year - int(year))
+
+
+EICU_TOP_CODED_AGE_YEARS = 90.0
+SICDB_SEX_BY_REFERENCE_ID = {
+    "735": "Male",
+    "736": "Female",
+    "737": "Unknown",
+}
+
+
+def eicu_age_years(value: object) -> float | None:
+    """Parse eICU age while preserving the protected ``>89`` top-code."""
+    text = str(value).strip()
+    if text.replace(" ", "") == ">89":
+        return EICU_TOP_CODED_AGE_YEARS
+    return as_float(text)
+
+
+def sicdb_sex(value: object) -> str:
+    """Map documented SICdb ``cases.Sex`` reference identifiers to labels."""
+    return SICDB_SEX_BY_REFERENCE_ID.get(str(value).strip(), "Unknown")
 
 
 def is_adult(value: object) -> bool:
@@ -262,21 +323,37 @@ def mimic_csv(archive: zipfile.ZipFile, member: str):
 
 
 def load_mimic() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]:
-    with zipfile.ZipFile(MIMIC) as archive:
-        adults: dict[str, tuple[float | None, str]] = {}
+    with zipfile.ZipFile(require_source_path(MIMIC, "MIMIC_IV_PATH")) as archive:
+        patients: dict[str, tuple[float | None, float | None, str]] = {}
         for row in mimic_csv(archive, "mimic-iv-3.1/hosp/patients.csv.gz"):
-            if is_adult(row["anchor_age"]):
-                adults[row["subject_id"]] = (as_float(row["anchor_age"]), row["gender"])
-        admissions: dict[str, tuple[datetime, datetime, datetime | None, str]] = {}
+            patients[row["subject_id"]] = (
+                as_float(row["anchor_age"]),
+                as_float(row["anchor_year"]),
+                row["gender"],
+            )
+        admissions: dict[str, tuple[str, datetime, datetime, datetime | None, str]] = {}
         for row in mimic_csv(archive, "mimic-iv-3.1/hosp/admissions.csv.gz"):
             admit, discharge = as_datetime(row["admittime"]), as_datetime(row["dischtime"])
             death = as_datetime(row["deathtime"]) if row["deathtime"] else None
             if admit is not None and discharge is not None and discharge > admit:
-                admissions[row["hadm_id"]] = (admit, discharge, death, row["admission_type"])
+                admissions[row["hadm_id"]] = (row["subject_id"], admit, discharge, death, row["admission_type"])
+        adult_admissions: dict[str, tuple[float, str]] = {}
+        for hadm, (subject, admit, _, _, _) in admissions.items():
+            anchor_age, anchor_year, sex = patients.get(subject, (None, None, ""))
+            admission_age = mimic_admission_age(anchor_age, anchor_year, admit)
+            if admission_age is not None and admission_age >= 18:
+                adult_admissions[hadm] = (admission_age, sex)
         units: dict[str, list[tuple[datetime, datetime, str]]] = defaultdict(list)
         for row in mimic_csv(archive, "mimic-iv-3.1/icu/icustays.csv.gz"):
             start, end = as_datetime(row["intime"]), as_datetime(row["outtime"])
-            if row["subject_id"] in adults and start is not None and end is not None and row["hadm_id"] in admissions:
+            admission = admissions.get(row["hadm_id"])
+            if (
+                row["hadm_id"] in adult_admissions
+                and admission is not None
+                and row["subject_id"] == admission[0]
+                and start is not None
+                and end is not None
+            ):
                 units[row["hadm_id"]].append((start, end, row["subject_id"]))
         spells: dict[str, Spell] = {}
         starts: dict[str, datetime] = {}
@@ -288,11 +365,11 @@ def load_mimic() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]
                     end = max(end, next_end)
                 else:
                     break
-            _, discharge, death, admission_type = admissions[hadm]
+            _, admit, discharge, death, admission_type = admissions[hadm]
             source_end = death if death is not None and start < death < discharge else discharge
             if source_end <= start:
                 continue
-            age, sex = adults[subject]
+            age, sex = adult_admissions[hadm]
             spells[hadm] = Spell(
                 hadm,
                 (source_end - start).total_seconds() / 60,
@@ -302,7 +379,10 @@ def load_mimic() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]
                 extra={
                     "subject_id": subject,
                     "start_dt": start,
-                    "admit_dt": admissions[hadm][0],
+                    "admit_dt": admit,
+                    "mimic_anchor_age": patients[subject][0],
+                    "mimic_anchor_year": patients[subject][1],
+                    "mimic_admission_age": age,
                     "continuous_icu_end_minutes": (end - start).total_seconds() / 60,
                     "hospital_death_dt": death,
                     "hospital_end_dt": source_end,
@@ -335,13 +415,15 @@ def load_mimic() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]
 
 
 def eicu_csv(name: str):
-    return csv.DictReader(gzip.open(EICU / name, "rt", encoding="utf-8", errors="replace", newline=""))
+    source_directory = require_source_path(EICU, "EICU_CRD_PATH")
+    return csv.DictReader(gzip.open(source_directory / name, "rt", encoding="utf-8", errors="replace", newline=""))
 
 
 def load_eicu() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]:
     by_health: dict[str, list[tuple[float, float, float, str, str, str, float | None, str, str, float | None, str]]] = defaultdict(list)
     for row in eicu_csv("patient.csv.gz"):
-        if not is_adult(row["age"]):
+        age = eicu_age_years(row["age"])
+        if age is None or age < 18:
             continue
         hospital_offset, unit_end = as_float(row["hospitaladmitoffset"]), as_float(row["unitdischargeoffset"])
         if hospital_offset is None or unit_end is None or unit_end <= 0:
@@ -349,7 +431,7 @@ def load_eicu() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]
         start = -hospital_offset
         by_health[row["patienthealthsystemstayid"]].append((
             start, start + unit_end, as_float(row["unitvisitnumber"]) or 0, row["patientunitstayid"], row["hospitalid"],
-            row["uniquepid"], as_float(row["age"]), row["gender"], row["unitadmitsource"], as_float(row["hospitaldischargeoffset"]), row["hospitaldischargestatus"],
+            row["uniquepid"], age, row["gender"], row["unitadmitsource"], as_float(row["hospitaldischargeoffset"]), row["hospitaldischargestatus"],
         ))
     spells: dict[str, Spell] = {}
     unit_mapping: dict[str, tuple[str, float]] = {}
@@ -409,7 +491,8 @@ def load_eicu() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]
 
 def sicdb_csv(member: str):
     import subprocess
-    process = subprocess.Popen(["bsdtar", "-xOf", str(SICDB), f"{SICDB_MEMBER_ROOT}/{member}"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    source_archive = require_source_path(SICDB, "SICDB_PATH")
+    process = subprocess.Popen(["bsdtar", "-xOf", str(source_archive), f"{SICDB_MEMBER_ROOT}/{member}"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if process.stdout is None:
         raise RuntimeError(f"Cannot open SICdb member {member}")
     return csv.DictReader(io.TextIOWrapper(gzip.GzipFile(fileobj=process.stdout), encoding="utf-8", errors="replace", newline="")), process
@@ -442,6 +525,7 @@ def load_sicdb() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]
             row["CaseID"],
             covered_end,
             age=as_float(row["AgeOnAdmission"]),
+            sex=sicdb_sex(row["Sex"]),
             admission_type=row["SurgicalAdmissionType"],
             extra={"icu_offset": offset, "time_of_stay": duration},
         )
@@ -479,7 +563,13 @@ def save_eicu_model_input(path: Path, episodes: list[Episode]) -> None:
         writer = csv.DictWriter(handle, fieldnames=["hospitalid", "age_group", "sex", "admission_type", "baseline_creatinine", "stage2plus", "onset_icu_day", "not_definitely_classifiable"])
         writer.writeheader()
         for episode in rows:
-            age_group = "unknown" if episode.age is None else f"{int(episode.age // 10) * 10}-{int(episode.age // 10) * 10 + 9}"
+            age_group = (
+                "unknown"
+                if episode.age is None
+                else ">=90"
+                if episode.age >= EICU_TOP_CODED_AGE_YEARS
+                else f"{int(episode.age // 10) * 10}-{int(episode.age // 10) * 10 + 9}"
+            )
             writer.writerow({
                 "hospitalid": episode.hospital,
                 "age_group": age_group,

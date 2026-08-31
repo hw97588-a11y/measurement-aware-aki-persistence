@@ -16,6 +16,12 @@ CATEGORIES = (
     "interval_indeterminate",
     "right_censored_unresolved",
 )
+PUBLIC_THINNING_EFFECTS = (
+    "index_episode_retention",
+    "primary_eligible_retention",
+    "conditional_monitoring_indeterminate_among_retained_primary_eligible",
+    "total_phenotype_failure_fixed_reference_denominator",
+)
 
 
 def load(path: Path):
@@ -135,13 +141,16 @@ def main() -> None:
             if row["thinned_category"] == "index_not_retained_later_recurrence_detected"
         )
         check(f"thinning {hours}h: recurrence separation", later > 0, "later recurrence is detected and reported separately")
-        thinning[str(hours)] = effects
+        # The public release carries only the controlled-thinning quantities
+        # retained in the manuscript. Historical hospital-rank diagnostics are
+        # deliberately excluded from the public aggregate audit.
+        thinning[str(hours)] = {key: effects[key] for key in PUBLIC_THINNING_EFFECTS}
     check("thinning: total failure gradient", total_failure == sorted(total_failure), "total failure increases from 12 to 48 h")
     check("thinning: index retention gradient", retention == sorted(retention, reverse=True), "index-episode retention decreases from 12 to 48 h")
 
     output = {
         "status": "PASS",
-        "analysis_version": "v6 targeted reanalysis / manuscript package v1.2",
+        "analysis_version": "v6 targeted reanalysis / public release v1.2.1",
         "implementation_changes": [
             "Post-onset creatinine follow-up retained through the applicable spell end, while index onset remained restricted to ICU day 0-7.",
             "SICdb coverage end re-anchored as (TimeOfStay - ICUOffset)/60 with non-positive intervals excluded.",

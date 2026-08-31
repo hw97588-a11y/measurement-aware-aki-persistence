@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "analysis_version": "v6 targeted reanalysis / manuscript package v1.2",
+  "analysis_version": "v6 targeted reanalysis / public release v1.2.1",
   "implementation_changes": [
     "Post-onset creatinine follow-up retained through the applicable spell end, while index onset remained restricted to ICU day 0-7.",
     "SICdb coverage end re-anchored as (TimeOfStay - ICUOffset)/60 with non-positive intervals excluded.",
@@ -218,16 +218,6 @@
         "monte_carlo_median": 0.366088,
         "monte_carlo_p025": 0.361083,
         "monte_carlo_p975": 0.37656
-      },
-      "hospital_raw_vs_thinned_failure_rank_spearman": {
-        "monte_carlo_median": 0.630484,
-        "monte_carlo_p025": 0.553146,
-        "monte_carlo_p975": 0.703482
-      },
-      "hospital_changed_failure_quartile_proportion": {
-        "monte_carlo_median": 0.53271,
-        "monte_carlo_p025": 0.476636,
-        "monte_carlo_p975": 0.598131
       }
     },
     "24": {
@@ -250,16 +240,6 @@
         "monte_carlo_median": 0.547549,
         "monte_carlo_p025": 0.507651,
         "monte_carlo_p975": 0.584883
-      },
-      "hospital_raw_vs_thinned_failure_rank_spearman": {
-        "monte_carlo_median": 0.183923,
-        "monte_carlo_p025": 0.040052,
-        "monte_carlo_p975": 0.268838
-      },
-      "hospital_changed_failure_quartile_proportion": {
-        "monte_carlo_median": 0.71028,
-        "monte_carlo_p025": 0.654206,
-        "monte_carlo_p975": 0.761916
       }
     },
     "36": {
@@ -282,16 +262,6 @@
         "monte_carlo_median": 0.717058,
         "monte_carlo_p025": 0.699898,
         "monte_carlo_p975": 0.74418
-      },
-      "hospital_raw_vs_thinned_failure_rank_spearman": {
-        "monte_carlo_median": -0.047351,
-        "monte_carlo_p025": -0.130892,
-        "monte_carlo_p975": 0.041495
-      },
-      "hospital_changed_failure_quartile_proportion": {
-        "monte_carlo_median": 0.738318,
-        "monte_carlo_p025": 0.682243,
-        "monte_carlo_p975": 0.785047
       }
     },
     "48": {
@@ -314,16 +284,6 @@
         "monte_carlo_median": 0.774566,
         "monte_carlo_p025": 0.743616,
         "monte_carlo_p975": 0.806591
-      },
-      "hospital_raw_vs_thinned_failure_rank_spearman": {
-        "monte_carlo_median": -0.045311,
-        "monte_carlo_p025": -0.186991,
-        "monte_carlo_p975": 0.030821
-      },
-      "hospital_changed_failure_quartile_proportion": {
-        "monte_carlo_median": 0.742991,
-        "monte_carlo_p025": 0.672897,
-        "monte_carlo_p975": 0.82243
       }
     }
   },

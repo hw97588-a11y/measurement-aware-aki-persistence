@@ -5,8 +5,6 @@
     "definition": "Fixed first creatinine-defined AKI episodes with potential ICU coverage through 48 h and at least four observed creatinines in the first 72 h.",
     "episodes": 9790,
     "hospitals": 184,
-    "hospital_count_for_rank_diagnostic": 107,
-    "minimum_reference_episodes_per_rank_hospital": 20,
     "reference_categories": {
       "definite_transient": 3352,
       "definite_persistent": 4113,
@@ -41,16 +39,6 @@
       "monte_carlo_median": 0.717058,
       "monte_carlo_p025": 0.699898,
       "monte_carlo_p975": 0.74418
-    },
-    "hospital_raw_vs_thinned_failure_rank_spearman": {
-      "monte_carlo_median": -0.047351,
-      "monte_carlo_p025": -0.130892,
-      "monte_carlo_p975": 0.041495
-    },
-    "hospital_changed_failure_quartile_proportion": {
-      "monte_carlo_median": 0.738318,
-      "monte_carlo_p025": 0.682243,
-      "monte_carlo_p975": 0.785047
     }
   },
   "transition_matrix": [
@@ -215,7 +203,6 @@
     "index_episode_retention": "Fixed reference index-AKI episodes still identified as the same episode after thinning; later recurrent AKI cannot substitute for a missed index episode.",
     "conditional_monitoring_indeterminate": "Indeterminate proportion only among thinned episodes that remain AKI and retain potential 48-h ICU coverage.",
     "total_phenotype_failure": "Fixed-reference denominator: index episode not detected, only a later recurrence detected, index detected after losing potential 48-h coverage, or index detected but monitoring-indeterminate.",
-    "episode_matching": "The thinned onset interval had to overlap the reference onset interval or the thinned first positive had to precede the reference observed recovery; later recurrence was reported separately.",
-    "hospital_rank": "Raw-versus-thinned failure-rate ranks are a Monte Carlo sensitivity diagnostic. They are not hospital performance ranks and are not shrinkage-adjusted."
+    "episode_matching": "The thinned onset interval had to overlap the reference onset interval or the thinned first positive had to precede the reference observed recovery; later recurrence was reported separately."
   }
 }

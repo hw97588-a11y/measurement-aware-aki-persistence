@@ -133,6 +133,6 @@ The study had one primary descriptive estimand. Robustness, observation-process
 and controlled-thinning analyses were supportive or exploratory; no
 multiplicity-adjusted confirmatory claims were made. Analyses
 used Python 3.13 with NumPy, SciPy, pandas and statsmodels. Raw source data
-remained read-only on the governed data volume. Nineteen phenotype,
+remained read-only on the governed data volume. Twenty-four phenotype,
 late-onset, recurrence and continuity unit tests and 44 final-revision
 reconciliation checks passed.

@@ -1,4 +1,4 @@
-# Result provenance for version 1.2.0
+# Result provenance for the version 1.2.1 release
 
 This manifest maps every retained manuscript table and figure to its
 non-disclosive aggregate source and the script that creates that source. The
@@ -24,4 +24,6 @@ re-estimate any phenotype or model.
 
 The protected patient-, episode-, hospital- and phase-level caches are excluded
 from this repository. `results/v6_targeted_reanalysis_audit.json` records 44
-passed reconciliation checks over the retained aggregate outputs.
+passed reconciliation checks over the retained aggregate outputs. Version 1.2.1
+records the portable execution environment and command-line smoke-test gates;
+it does not alter the frozen numerical results.

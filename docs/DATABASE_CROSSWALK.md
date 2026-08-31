@@ -11,7 +11,7 @@ entry, creatinine in mg/dL)` observations and one continuous ICU spell.
 | Clinical time | `labevents.charttime` | `laboratory.Offset` relative to `ICUOffset` | `lab.labResultOffset` aligned across joined units |
 | Units | mg/dL | source values used after distribution/unit audit | mg/dL; µmol/L or umol/L divided by 88.4 |
 | Hospital cluster | single centre | not used for primary resampling | `hospitalId` |
-| Patient bootstrap cluster | `subject_id` | `PatientID` | hospital, then episode within hospital |
+| Patient bootstrap cluster | `subject_id` | `PatientID` | hospital, then true `uniquepid` within hospital; all eligible episodes for each sampled patient are retained |
 
 Only central laboratory serum/plasma creatinine is used. Duplicate values at
 the same timestamp are reduced to their median. Values outside 0.1–25 mg/dL

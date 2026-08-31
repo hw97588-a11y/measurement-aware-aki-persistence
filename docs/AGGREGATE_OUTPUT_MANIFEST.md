@@ -39,7 +39,7 @@ patient-clustered generalized estimating equation parameters, and standardized
 descriptive retesting probabilities. No inverse-observation weighting result is
 part of the submission freeze.
 
-## Version 1.2.0 audit
+## Audit bundled with version 1.2.1
 
 - `results/v6_targeted_reanalysis_audit.json`
 
@@ -47,7 +47,9 @@ This file records 44 passed consistency checks covering distinct time windows,
 SICdb endpoint alignment, true patient clusters, index-episode-anchored
 thinning, flow identities and cross-file agreement. The final submission freeze
 does not include the earlier mortality landmark, inverse-observation-weighting,
-hospital-ranking or unanchored thinning outputs.
+hospital-ranking or unanchored thinning outputs. Version 1.2.1 retains these
+same non-disclosive aggregates and adds no patient-, episode-, hospital- or
+phase-level records.
 
 ## Episode-continuity sensitivity
 
@@ -63,7 +65,10 @@ These files report only source-level counts and proportions under 24- and
 These files contain index-episode-anchored Monte Carlo summaries and aggregate
 transition counts over 500 phases. Later recurrence cannot substitute for a
 missed index episode. The protected trajectory cache and phase-level files are
-not distributed.
+not distributed. The public release also removes legacy aggregate
+hospital-ranking diagnostics because they are not part of the retained
+manuscript analyses; `prepare_public_aggregate_release.py --check` verifies
+their absence.
 
 ## Manuscript tables
 

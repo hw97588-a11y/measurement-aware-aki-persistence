@@ -73,7 +73,8 @@ No patient-level cross-database pooling.
 - Baseline, index-search and recovery-follow-up windows are distinct; SICdb
   laboratory and coverage endpoints share the ICUOffset origin: PASS.
 - Primary engine synthetic boundary tests and reconciliation audit: PASS
-  (19/19 unit tests; 44/44 final-revision checks).
+  (24/24 unit tests: 20 phenotype-engine and 4 continuity-support tests;
+  44/44 final-revision checks).
 - eICU inference resamples hospitals and then true unique patients within
   sampled hospitals: PASS.
 - Single-episode continuity convention disclosed and 24/36-hour gap

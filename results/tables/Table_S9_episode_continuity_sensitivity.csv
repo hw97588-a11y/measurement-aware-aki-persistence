@@ -1,7 +1,0 @@
-Database,Primary denominator,Original indeterminate n,Original indeterminate %,Original lower bound %,Original upper bound %,Gap rule,Continuity-gap indeterminate n,Continuity-gap indeterminate %,Total indeterminate after reclassification n,Total indeterminate after reclassification %,Revised lower bound %,Upper bound unchanged %
-MIMIC-IV v3.1,10504,2623,24.97,38.29,63.26,24 h,1548,14.74,4171,39.71,23.55,63.26
-MIMIC-IV v3.1,10504,2623,24.97,38.29,63.26,36 h,18,0.17,2641,25.14,38.12,63.26
-SICdb v1.0.8,2472,895,36.21,37.42,73.62,24 h,760,30.74,1655,66.95,6.67,73.62
-SICdb v1.0.8,2472,895,36.21,37.42,73.62,36 h,34,1.38,929,37.58,36.04,73.62
-eICU-CRD v2.0,14599,4963,34.00,34.96,68.96,24 h,3927,26.90,8890,60.89,8.06,68.96
-eICU-CRD v2.0,14599,4963,34.00,34.96,68.96,36 h,229,1.57,5192,35.56,33.39,68.96

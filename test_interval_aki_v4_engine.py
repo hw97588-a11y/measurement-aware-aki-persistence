@@ -5,7 +5,8 @@ from __future__ import annotations
 import unittest
 
 from interval_aki_v4_engine import M48, classify_first_episode
-from run_interval_aki_primary import Spell
+from run_interval_aki_primary import Spell, sicdb_icu_covered_end_minutes
+from run_v4_controlled_thinning import index_episode_match_state
 
 
 def spell(end_minutes: float = 7 * 24 * 60) -> Spell:
@@ -80,6 +81,54 @@ class IntervalAkiV4Tests(unittest.TestCase):
     def test_first_48_hours_aki_history_is_detected(self):
         episode = self.classify([(0, 1.0), (30, 1.5), (M48 + 60, 1.5)])
         self.assertFalse(episode.no_identifiable_aki_first48h)
+
+    def test_late_day6_onset_uses_followup_beyond_icu_day7(self):
+        episode = self.classify([
+            (5 * 24 * 60, 1.0),
+            (6 * 24 * 60, 1.5),
+            (8 * 24 * 60 + 1, 1.5),
+            (9 * 24 * 60, 1.0),
+        ], end=10 * 24 * 60)
+        self.assertEqual(episode.category, "definite_persistent")
+        self.assertEqual(episode.recovery_upper, 9 * 24 * 60)
+
+    def test_index_search_end_is_distinct_from_followup_end(self):
+        indexed_spell = Spell(
+            "synthetic",
+            10 * 24 * 60,
+            extra={"cluster_id": "synthetic", "index_search_end_minutes": 2 * 24 * 60},
+        )
+        late_only = classify_first_episode(
+            "synthetic",
+            indexed_spell,
+            [(0, 1.0), (3 * 24 * 60, 1.5), (4 * 24 * 60, 1.0)],
+        )
+        self.assertIsNone(late_only)
+        early_with_late_recovery = classify_first_episode(
+            "synthetic",
+            indexed_spell,
+            [(0, 1.0), (24 * 60, 1.5), (4 * 24 * 60, 1.0)],
+        )
+        self.assertIsNotNone(early_with_late_recovery)
+        self.assertEqual(early_with_late_recovery.recovery_upper, 4 * 24 * 60)
+
+    def test_sicdb_coverage_end_uses_same_icuoffset_origin(self):
+        self.assertEqual(sicdb_icu_covered_end_minutes(10 * 3600, 2 * 3600), 8 * 60)
+        self.assertIsNone(sicdb_icu_covered_end_minutes(2 * 3600, 2 * 3600))
+
+    def test_later_recurrence_cannot_replace_missed_index_episode(self):
+        original = self.classify([
+            (0, 1.0), (60, 1.5), (12 * 60, 1.0),
+            (72 * 60, 1.0), (73 * 60, 1.5),
+        ])
+        scheduled = self.classify([
+            (0, 1.0), (12 * 60, 1.0),
+            (72 * 60, 1.0), (73 * 60, 1.5),
+        ])
+        self.assertEqual(
+            index_episode_match_state(original, scheduled),
+            "index_not_retained_later_recurrence_detected",
+        )
 
 
 if __name__ == "__main__":

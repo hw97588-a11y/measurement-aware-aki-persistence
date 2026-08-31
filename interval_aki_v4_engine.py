@@ -103,11 +103,12 @@ def classify_first_episode(
 ) -> V4Episode | None:
     """Classify first ICU AKI episode under ICU coverage, without KRT assumptions."""
     series = [(t, c) for t, c in deduplicate(values) if -M7D <= t <= spell.end]
+    index_search_end = min(M7D, float(spell.extra.get("index_search_end_minutes", spell.end)))
     previous_positive = False
     last_non_aki: float | None = None
     for index, (time, creatinine) in enumerate(series):
         positive, baseline48, baseline7 = _rolling_positive(series, index)
-        if positive and not previous_positive and 0 <= time <= min(M7D, spell.end) and last_non_aki is not None and baseline7 is not None:
+        if positive and not previous_positive and 0 <= time <= index_search_end and last_non_aki is not None and baseline7 is not None:
             recovery_limit = min(baseline7 + 0.3, 1.5 * baseline7)
             post = series[index:]
             recovery_index = _confirmation_index(post, recovery_limit, recovery_policy)

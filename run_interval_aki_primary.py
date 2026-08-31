@@ -14,7 +14,6 @@ import gzip
 import io
 import json
 import math
-import os
 import statistics
 import zipfile
 from collections import Counter, defaultdict
@@ -23,26 +22,13 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 
-def _configured_path(environment_variable: str) -> Path | None:
-    value = os.environ.get(environment_variable)
-    return Path(value).expanduser() if value else None
-
-
-def require_source_path(path: Path | None, environment_variable: str) -> Path:
-    if path is None:
-        raise RuntimeError(f"Set {environment_variable} to the governed source-data path before running this analysis.")
-    if not path.exists():
-        raise FileNotFoundError(f"{environment_variable} does not exist: {path}")
-    return path
-
-
-MIMIC = _configured_path("MIMIC_IV_PATH")
-EICU = _configured_path("EICU_CRD_PATH")
-SICDB = _configured_path("SICDB_PATH")
-SICDB_MEMBER_ROOT = os.environ.get(
-    "SICDB_MEMBER_ROOT",
-    "salzburg-intensive-care-database-sicdb-a-freely-accessible-intensive-care-database-1.0.8",
+MIMIC = Path("/Volumes/T9/重症/mimic-iv-3.1.zip")
+EICU = Path("/Volumes/T9/重症/eicu数据库/EICU 2.0数据")
+SICDB = Path(
+    "/Volumes/T9/重症/SICdb数据库/"
+    "salzburg-intensive-care-database-sicdb-a-freely-accessible-intensive-care-database-1.0.8.rar"
 )
+SICDB_MEMBER_ROOT = "salzburg-intensive-care-database-sicdb-a-freely-accessible-intensive-care-database-1.0.8"
 
 M48 = 48 * 60
 M72 = 72 * 60
@@ -276,7 +262,7 @@ def mimic_csv(archive: zipfile.ZipFile, member: str):
 
 
 def load_mimic() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]:
-    with zipfile.ZipFile(require_source_path(MIMIC, "MIMIC_IV_PATH")) as archive:
+    with zipfile.ZipFile(MIMIC) as archive:
         adults: dict[str, tuple[float | None, str]] = {}
         for row in mimic_csv(archive, "mimic-iv-3.1/hosp/patients.csv.gz"):
             if is_adult(row["anchor_age"]):
@@ -338,15 +324,18 @@ def load_mimic() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]
             if spell is None or observed is None or row[10].strip().casefold() != "mg/dl" or not valid_creatinine(value):
                 continue
             offset = (observed - starts[hadm]).total_seconds() / 60
-            if -M7D <= offset <= min(M7D, spell.end):
+            # Keep the historical baseline window and the complete post-onset
+            # follow-up window distinct.  AKI onset is searched only through
+            # ICU day 7 downstream, but recovery may occur any time before the
+            # applicable ICU/hospital observation end.
+            if -M7D <= offset <= spell.end:
                 labs[hadm].append((offset, value))
         raw.close()
     return spells, labs
 
 
 def eicu_csv(name: str):
-    source = require_source_path(EICU, "EICU_CRD_PATH")
-    return csv.DictReader(gzip.open(source / name, "rt", encoding="utf-8", errors="replace", newline=""))
+    return csv.DictReader(gzip.open(EICU / name, "rt", encoding="utf-8", errors="replace", newline=""))
 
 
 def load_eicu() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]:
@@ -409,7 +398,7 @@ def load_eicu() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]
         offset = as_float(row["labresultoffset"])
         spell = spells[spell_id]
         source_offset = unit_start + offset if offset is not None else None
-        if source_offset is not None and valid_creatinine(value) and -M7D <= source_offset <= min(M7D, spell.end):
+        if source_offset is not None and valid_creatinine(value) and -M7D <= source_offset <= spell.end:
             labs[spell_id].append((source_offset, value))
     incompatible = {hospital for hospital, unit_counts in raw_units.items() if any(unit not in {"mg/dl", "µmol/l", "umol/l"} for unit in unit_counts)}
     if incompatible:
@@ -420,11 +409,21 @@ def load_eicu() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]
 
 def sicdb_csv(member: str):
     import subprocess
-    source = require_source_path(SICDB, "SICDB_PATH")
-    process = subprocess.Popen(["bsdtar", "-xOf", str(source), f"{SICDB_MEMBER_ROOT}/{member}"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(["bsdtar", "-xOf", str(SICDB), f"{SICDB_MEMBER_ROOT}/{member}"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if process.stdout is None:
         raise RuntimeError(f"Cannot open SICdb member {member}")
     return csv.DictReader(io.TextIOWrapper(gzip.GzipFile(fileobj=process.stdout), encoding="utf-8", errors="replace", newline="")), process
+
+
+def sicdb_icu_covered_end_minutes(time_of_stay_seconds: float, icu_offset_seconds: float) -> float | None:
+    """Return database-covered time after first ICU bed assignment.
+
+    SICdb TimeOfStay and laboratory Offset share the case-level origin, while
+    ICUOffset marks the first ICU bed assignment.  Once laboratory times are
+    shifted by ICUOffset, the coverage end must be shifted by the same amount.
+    """
+    covered_seconds = time_of_stay_seconds - icu_offset_seconds
+    return covered_seconds / 60 if covered_seconds > 0 else None
 
 
 def load_sicdb() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]]:
@@ -434,9 +433,18 @@ def load_sicdb() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]
         if not is_adult(row["AgeOnAdmission"]):
             continue
         duration, offset = as_float(row["TimeOfStay"]), as_float(row["ICUOffset"])
-        if duration is None or offset is None or duration <= 0:
+        if duration is None or offset is None:
             continue
-        spells[row["CaseID"]] = Spell(row["CaseID"], duration / 60, age=as_float(row["AgeOnAdmission"]), admission_type=row["SurgicalAdmissionType"], extra={"icu_offset": offset})
+        covered_end = sicdb_icu_covered_end_minutes(duration, offset)
+        if covered_end is None:
+            continue
+        spells[row["CaseID"]] = Spell(
+            row["CaseID"],
+            covered_end,
+            age=as_float(row["AgeOnAdmission"]),
+            admission_type=row["SurgicalAdmissionType"],
+            extra={"icu_offset": offset, "time_of_stay": duration},
+        )
     if process.wait() != 0:
         raise RuntimeError("Cannot read SICdb cases")
     labs: dict[str, list[tuple[float, float]]] = defaultdict(list)
@@ -449,7 +457,7 @@ def load_sicdb() -> tuple[dict[str, Spell], dict[str, list[tuple[float, float]]]
         if offset is None or not valid_creatinine(value):
             continue
         relative = (offset - float(spell.extra["icu_offset"])) / 60
-        if -M7D <= relative <= min(M7D, spell.end):
+        if -M7D <= relative <= spell.end:
             labs[spell.identifier].append((relative, value))
     if process.wait() != 0:
         raise RuntimeError("Cannot read SICdb laboratory data")

@@ -27,7 +27,7 @@ from interval_aki_v4_engine import (
     load_source,
 )
 from run_interval_aki_primary import M7D, Spell, deduplicate, load_mimic
-from mimic_history_helper import historical_baselines
+from run_mimic_baseline_sensitivity import historical_baselines
 from run_v4_primary_inference import (
     _cluster_bootstrap,
     _two_stage_hospital_patient_bootstrap,
@@ -108,11 +108,105 @@ def _flow_counts(
         "excluded_at_least_two_measurements_but_no_observed_qualifying_nonaki_to_aki_transition": at_least_two_no_episode,
         "first_observed_transition_defined_aki_episodes": len(episodes),
         "unique_patients_with_episode": len({episode.cluster_id for episode in episodes.values()}),
-        "excluded_structural_icu_coverage_end_before_48h": sum(not episode.coverage_48h for episode in episodes.values()),
+        "insufficient_48h_icu_observation_opportunity": sum(not episode.coverage_48h for episode in episodes.values()),
         "primary_48h_potential_icu_coverage_episodes": len(primary),
         "unique_patients_in_primary_population": len({episode.cluster_id for episode in primary.values()}),
         "interpretation": "The source cohort is restricted to first observed transition-defined creatinine AKI, not all prevalent or biological AKI.",
     }
+
+
+def _median_iqr(values: list[float]) -> dict[str, float | int | None]:
+    if not values:
+        return {"n": 0, "median": None, "p25": None, "p75": None}
+    array = np.asarray(values, dtype=float)
+    return {
+        "n": len(values),
+        "median": round(float(np.median(array)), 3),
+        "p25": round(float(np.quantile(array, 0.25)), 3),
+        "p75": round(float(np.quantile(array, 0.75)), 3),
+    }
+
+
+def _primary_characteristics(
+    spells: dict[str, Spell],
+    labs: dict[str, list[tuple[float, float]]],
+    rolling: dict[str, V4Episode],
+) -> dict[str, object]:
+    primary = {identifier: episode for identifier, episode in rolling.items() if episode.coverage_48h}
+    ages = [episode.age for episode in primary.values() if episode.age is not None]
+    baselines = [episode.baseline for episode in primary.values()]
+    onset_days = [episode.onset_upper / (24 * 60) for episode in primary.values()]
+    spell_hours = [spells[identifier].end / 60 for identifier in primary]
+    measurement_counts: list[float] = []
+    adjacent_intervals: list[float] = []
+    retested_24h = 0
+    for identifier, episode in primary.items():
+        observed = [
+            time for time, _ in deduplicate(labs.get(identifier, []))
+            if 0 <= time <= spells[identifier].end
+        ]
+        measurement_counts.append(float(len(observed)))
+        adjacent_intervals.extend((later - earlier) / 60 for earlier, later in zip(observed, observed[1:]))
+        retested_24h += any(episode.onset_upper < time <= episode.onset_upper + 24 * 60 for time in observed)
+    return {
+        "episodes": len(primary),
+        "unique_patients": len({episode.cluster_id for episode in primary.values()}),
+        "age_years_or_source_group_midpoint": _median_iqr([float(value) for value in ages]),
+        "sex": dict(Counter((episode.sex or "Unknown") for episode in primary.values())),
+        "admission_type_top10": dict(Counter((episode.admission_type or "Unknown") for episode in primary.values()).most_common(10)),
+        "baseline_creatinine_mg_dl": _median_iqr(baselines),
+        "initial_aki_stage": dict(Counter(str(episode.initial_aki_stage) for episode in primary.values())),
+        "onset_icu_day": _median_iqr(onset_days),
+        "database_covered_critical_care_spell_hours": _median_iqr(spell_hours),
+        "creatinine_measurements_during_covered_spell": _median_iqr(measurement_counts),
+        "adjacent_creatinine_interval_hours": _median_iqr(adjacent_intervals),
+        "retested_within_24h_after_first_positive": {
+            "n": retested_24h,
+            "denominator": len(primary),
+            "proportion": round(retested_24h / len(primary), 6) if primary else None,
+        },
+    }
+
+
+def _feasibility_summary(rolling: dict[str, V4Episode]) -> dict[str, object]:
+    all_episodes = list(rolling.values())
+    classifiable = sum(
+        episode.coverage_48h and episode.category in {"definite_transient", "definite_persistent"}
+        for episode in all_episodes
+    )
+    indeterminate = sum(
+        episode.coverage_48h and episode.category in {"interval_indeterminate", "right_censored_unresolved"}
+        for episode in all_episodes
+    )
+    insufficient = sum(not episode.coverage_48h for episode in all_episodes)
+    denominator = len(all_episodes)
+    if classifiable + indeterminate + insufficient != denominator:
+        raise AssertionError("Phenotype-feasibility categories do not reconcile")
+    return {
+        "all_first_observed_index_aki_episodes": denominator,
+        "with_48h_opportunity_and_uniquely_classifiable": {
+            "n": classifiable,
+            "proportion": round(classifiable / denominator, 6) if denominator else None,
+        },
+        "with_48h_opportunity_but_classification_indeterminate": {
+            "n": indeterminate,
+            "proportion": round(indeterminate / denominator, 6) if denominator else None,
+        },
+        "insufficient_48h_icu_observation_opportunity": {
+            "n": insufficient,
+            "proportion": round(insufficient / denominator, 6) if denominator else None,
+        },
+    }
+
+
+def _one_episode_per_patient(primary: dict[str, V4Episode]) -> list[V4Episode]:
+    """Retain one deterministic eligible source record per unique patient."""
+    selected: dict[str, tuple[str, V4Episode]] = {}
+    for identifier, episode in primary.items():
+        current = selected.get(episode.cluster_id)
+        if current is None or str(identifier) < current[0]:
+            selected[episode.cluster_id] = (str(identifier), episode)
+    return [item[1] for item in selected.values()]
 
 
 def _fixed_baseline_episode(
@@ -120,12 +214,13 @@ def _fixed_baseline_episode(
     values: list[tuple[float, float]],
     baseline: float,
 ) -> ResampleEpisode | None:
-    series = [(time, value) for time, value in deduplicate(values) if -M7D <= time <= min(M7D, spell.end)]
+    series = [(time, value) for time, value in deduplicate(values) if -M7D <= time <= spell.end]
+    index_search_end = min(M7D, float(spell.extra.get("index_search_end_minutes", spell.end)))
     previous_positive = False
     last_non_aki: float | None = None
     for index, (time, creatinine) in enumerate(series):
         positive = creatinine - baseline >= 0.3 or creatinine / baseline >= 1.5
-        if positive and not previous_positive and 0 <= time <= min(M7D, spell.end) and last_non_aki is not None:
+        if positive and not previous_positive and 0 <= time <= index_search_end and last_non_aki is not None:
             recovery_limit = min(baseline + 0.3, 1.5 * baseline)
             post = series[index:]
             recovery_index = next((j for j, (_, value) in enumerate(post) if value < recovery_limit), None)
@@ -244,7 +339,14 @@ def _sicdb_preicu_baseline_sensitivity(
 def _mimic_window_sensitivity(replicates: int, seed: int) -> dict[str, object]:
     raw_spells, labs = load_mimic()
     hospital_spells = {
-        identifier: replace(spell, extra={**spell.extra, "cluster_id": str(spell.extra["subject_id"])})
+        identifier: replace(
+            spell,
+            extra={
+                **spell.extra,
+                "cluster_id": str(spell.extra["subject_id"]),
+                "index_search_end_minutes": float(spell.extra["continuous_icu_end_minutes"]),
+            },
+        )
         for identifier, spell in raw_spells.items()
     }
     icu_spells = {
@@ -261,7 +363,7 @@ def _mimic_window_sensitivity(replicates: int, seed: int) -> dict[str, object]:
         "hospital_wide": _resampling_summary(
             [episode for episode in hospital_episodes.values() if episode.coverage_48h], "mimic", replicates, seed + 41
         ),
-        "note": "ICU-only is the cross-database primary scope; hospital-wide MIMIC ascertainment is a source-specific sensitivity analysis.",
+        "note": "ICU-only is the cross-database primary scope. The hospital-wide sensitivity keeps index-AKI onset restricted to the same continuous ICU spell and extends only recovery follow-up to hospital discharge or earlier in-hospital death.",
     }
 
 
@@ -338,12 +440,26 @@ def analyse(database: str, replicates: int, seed: int) -> dict[str, object]:
         for episode in primary
         if episode.onset_upper >= M48 and episode.n_first48h >= 2 and episode.no_identifiable_aki_first48h
     ]
+    primary_map = {identifier: episode for identifier, episode in rolling.items() if episode.coverage_48h}
+    stage1 = [episode for episode in primary if episode.initial_aki_stage == 1]
+    stage2plus = [episode for episode in primary if episode.initial_aki_stage >= 2]
     output: dict[str, object] = {
         "source": source,
         "scope": "Corrected v5 ICU-only core robustness; mortality, IPW and hospital ranking excluded.",
         "flow": _flow_counts(spells, labs, rolling),
+        "all_index_episode_phenotype_feasibility": _feasibility_summary(rolling),
+        "primary_clinical_and_observation_characteristics": _primary_characteristics(spells, labs, rolling),
         "recovery_definition_sensitivity": recovery,
         "strict_icu_acquired_aki": _resampling_summary(strict, database, replicates, seed + 10),
+        "initial_aki_stage_sensitivity": {
+            "stage_1": _resampling_summary(stage1, database, replicates, seed + 11),
+            "stage_2_or_3": _resampling_summary(stage2plus, database, replicates, seed + 12),
+            "interpretation": "Descriptive clinical-gradient sensitivity; no multiplicity-adjusted subgroup claim was prespecified.",
+        },
+        "one_episode_per_unique_patient_sensitivity": {
+            **_resampling_summary(_one_episode_per_patient(primary_map), database, replicates, seed + 13),
+            "selection_rule": "One deterministic eligible source record per unique patient, selected by stable source identifier; this addresses repeated contribution but is not interpreted as chronologic ordering where absolute dates are unavailable.",
+        },
     }
     if database == "mimic":
         output["baseline_creatinine_sensitivity"] = _mimic_baseline_sensitivity(

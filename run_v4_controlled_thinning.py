@@ -22,7 +22,7 @@ import numpy as np
 from scipy.stats import rankdata, spearmanr
 
 from interval_aki_v4_engine import M72, UNRESOLVED, classify_first_episode
-from run_interval_aki_primary import EICU, M7D, Spell, as_float, deduplicate, is_adult, require_source_path, valid_creatinine
+from run_interval_aki_primary import EICU, M7D, Spell, as_float, deduplicate, is_adult, valid_creatinine
 
 
 CATEGORIES = ["definite_transient", "definite_persistent", "interval_indeterminate", "right_censored_unresolved"]
@@ -62,9 +62,8 @@ def fast_eicu_source() -> tuple[str, dict[str, Spell], dict[str, list[tuple[floa
     the broad text filter, after which Python validates the 1.28M candidate
     creatinine records using the same units and time rules as the v4 loader.
     """
-    eicu_source = require_source_path(EICU, "EICU_CRD_PATH")
     by_health: dict[str, list[tuple[float, float, float, str, str, str, float | None, str, str, float | None, str]]] = defaultdict(list)
-    with gzip.open(eicu_source / "patient.csv.gz", "rt", encoding="utf-8", errors="replace", newline="") as handle:
+    with gzip.open(EICU / "patient.csv.gz", "rt", encoding="utf-8", errors="replace", newline="") as handle:
         for row in csv.DictReader(handle):
             if not is_adult(row["age"]):
                 continue
@@ -105,7 +104,7 @@ def fast_eicu_source() -> tuple[str, dict[str, Spell], dict[str, list[tuple[floa
                 unit_mapping[stay] = (health, unit_start - first_start)
     raw_units: dict[str, Counter] = defaultdict(Counter)
     labs: dict[str, list[tuple[float, float]]] = defaultdict(list)
-    gzip_process = subprocess.Popen(["gzip", "-dc", str(eicu_source / "lab.csv.gz")], stdout=subprocess.PIPE)
+    gzip_process = subprocess.Popen(["gzip", "-dc", str(EICU / "lab.csv.gz")], stdout=subprocess.PIPE)
     if gzip_process.stdout is None:
         raise RuntimeError("Cannot start gzip lab stream")
     filter_process = subprocess.Popen(["rg", "-i", ",1,creatinine,"], stdin=gzip_process.stdout, stdout=subprocess.PIPE)
@@ -135,7 +134,7 @@ def fast_eicu_source() -> tuple[str, dict[str, Spell], dict[str, list[tuple[floa
         offset = as_float(row["labresultoffset"])
         spell = spells[spell_id]
         source_offset = unit_start + offset if offset is not None else None
-        if source_offset is not None and valid_creatinine(value) and -M7D <= source_offset <= min(M7D, spell.end):
+        if source_offset is not None and valid_creatinine(value) and -M7D <= source_offset <= spell.end:
             labs[spell_id].append((source_offset, value))
     if filter_process.wait() != 0 or gzip_process.wait() != 0:
         raise RuntimeError("Creatinine row stream did not finish cleanly")
@@ -158,6 +157,25 @@ def source_reference():
         if episode is not None and episode.coverage_48h and n72 >= 4:
             reference[identifier] = episode
     return source, spells, labs, reference
+
+
+def index_episode_match_state(original, scheduled) -> str:
+    """Match a thinned episode to the fixed index episode.
+
+    The index episode is retained when the thinned onset interval overlaps the
+    original onset interval or its first positive measurement occurs before
+    the original observed recovery.  A first thinned AKI beginning only after
+    observed recovery is a later recurrence and cannot substitute for the
+    missed index episode.  Without observed recovery, the prespecified
+    single-episode continuity convention is retained.
+    """
+    if scheduled is None:
+        return "index_not_detected"
+    overlap = max(original.onset_lower, scheduled.onset_lower) <= min(original.onset_upper, scheduled.onset_upper)
+    before_observed_recovery = original.recovery_upper is None or scheduled.onset_upper < original.recovery_upper
+    if overlap or before_observed_recovery:
+        return "index_retained"
+    return "index_not_retained_later_recurrence_detected"
 
 
 def main() -> None:
@@ -205,12 +223,18 @@ def main() -> None:
                 scheduled = classify_first_episode(source, spells[identifier], thin(labs.get(identifier, []), float(phase), interval))
                 ref_category = original.category
                 hospital = str(original.hospital_id)
-                if scheduled is None:
-                    state = "not_detected"
-                    counts["not_detected"] += 1
+                match_state = index_episode_match_state(original, scheduled)
+                if match_state == "index_not_detected":
+                    state = "index_not_detected"
+                    counts[state] += 1
+                    failed = 1
+                elif match_state == "index_not_retained_later_recurrence_detected":
+                    state = match_state
+                    counts[state] += 1
+                    counts["later_recurrence_detected"] += 1
                     failed = 1
                 elif not scheduled.coverage_48h:
-                    state = "detected_without_potential_48h_coverage"
+                    state = "index_retained_without_potential_48h_coverage"
                     counts[state] += 1
                     failed = 1
                 else:
@@ -218,14 +242,14 @@ def main() -> None:
                     counts["retained_primary_eligible_aki"] += 1
                     counts[state] += 1
                     failed = int(state in UNRESOLVED)
-                counts["retained_aki"] += int(scheduled is not None)
+                counts["retained_index_aki"] += int(match_state == "index_retained")
                 counts["total_failure"] += failed
                 transition[(ref_category, state)] += 1
                 if hospital in hospital_index:
                     hospital_failure[hospital_index[hospital]] += failed
             total = len(reference)
             retained_primary = counts["retained_primary_eligible_aki"]
-            per_phase["phenotype_retention"].append(counts["retained_aki"] / total)
+            per_phase["index_episode_retention"].append(counts["retained_index_aki"] / total)
             per_phase["primary_eligible_retention"].append(retained_primary / total)
             per_phase["conditional_monitoring_indeterminate_among_retained_primary_eligible"].append(
                 (counts["interval_indeterminate"] + counts["right_censored_unresolved"]) / retained_primary if retained_primary else float("nan")
@@ -241,7 +265,12 @@ def main() -> None:
                     "replicates": args.replicates, "reference_episodes": len(reference),
                 }, indent=2) + "\n")
         transition_rows = []
-        state_order = ["not_detected", "detected_without_potential_48h_coverage", *CATEGORIES]
+        state_order = [
+            "index_not_detected",
+            "index_not_retained_later_recurrence_detected",
+            "index_retained_without_potential_48h_coverage",
+            *CATEGORIES,
+        ]
         for ref_category in CATEGORIES:
             for state in state_order:
                 count = transition[(ref_category, state)]
@@ -271,9 +300,10 @@ def main() -> None:
             "effect_decomposition": {name: percentile_summary(values) for name, values in per_phase.items()},
             "transition_matrix": transition_rows,
             "interpretation": {
-                "phenotype_retention": "Reference AKI episodes still identified as AKI after thinning; this is not biological sensitivity.",
+                "index_episode_retention": "Fixed reference index-AKI episodes still identified as the same episode after thinning; later recurrent AKI cannot substitute for a missed index episode.",
                 "conditional_monitoring_indeterminate": "Indeterminate proportion only among thinned episodes that remain AKI and retain potential 48-h ICU coverage.",
-                "total_phenotype_failure": "Fixed-reference denominator: not detected, detected after losing potential 48-h coverage, or detected but monitoring-indeterminate.",
+                "total_phenotype_failure": "Fixed-reference denominator: index episode not detected, only a later recurrence detected, index detected after losing potential 48-h coverage, or index detected but monitoring-indeterminate.",
+                "episode_matching": "The thinned onset interval had to overlap the reference onset interval or the thinned first positive had to precede the reference observed recovery; later recurrence was reported separately.",
                 "hospital_rank": "Raw-versus-thinned failure-rate ranks are a Monte Carlo sensitivity diagnostic. They are not hospital performance ranks and are not shrinkage-adjusted.",
             },
         }

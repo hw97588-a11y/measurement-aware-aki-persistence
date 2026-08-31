@@ -8,14 +8,14 @@ tests, and non-disclosive aggregate outputs supporting the study:
 
 Repository: https://github.com/hw97588-a11y/measurement-aware-aki-persistence
 
-Archived release: https://doi.org/10.5281/zenodo.22178599
+Archived release: https://doi.org/10.5281/zenodo.22182737
 
 The analysis evaluates whether irregular routine creatinine measurements allow
 each creatinine-defined acute kidney injury (AKI) episode to be uniquely
 classified as lasting no more than 48 hours or more than 48 hours. Episodes
 whose feasible duration interval crosses 48 hours remain classification-
-indeterminate; consequently, the population prevalence of persistent AKI is reported
-as a lower and upper bound.
+indeterminate; consequently, the episode-level proportion persisting beyond
+48 hours is reported as a lower and upper bound.
 
 ## Data access
 
@@ -37,7 +37,9 @@ patient identifiers, hospital identifiers, or episode-level model inputs.
 
 - `run_interval_aki_primary.py`: database-specific source mapping and common
   cleaning utilities.
-- `interval_aki_v4_engine.py`: ICU-coverage interval phenotype engine.
+- `interval_aki_v4_engine.py`: ICU-coverage interval phenotype engine. Index
+  AKI is searched during ICU days 0–7, while recovery follow-up continues to
+  the end of the continuous database-covered critical-care spell.
 - `run_v4_primary_inference.py`: primary categories, partial-identification
   bounds, threshold curves, and unique-patient-cluster bootstrap inference;
   eICU uses hospital-to-patient two-stage resampling.
@@ -49,14 +51,16 @@ patient identifiers, hospital identifiers, or episode-level model inputs.
 - `run_v5_observation_process.py`: corrected ICU-only, true-patient-clustered
   recurrent retesting models. These models are descriptive and do not impute
   persistence status.
-- `audit_v5_revision_outputs.py`: 47 cross-file, denominator, clustering and
-  arithmetic checks used for the revised submission freeze.
+- `audit_v6_targeted_outputs.py`: 44 cross-file, time-window, denominator,
+  clustering, index-episode-matching and arithmetic checks used for the
+  version 1.2.0 submission freeze.
 - `run_ndt_continuity_gap_sensitivity.py`: 24- and 36-hour observed-positive-
   chain continuity stress tests.
 - `cache_v4_thinning_reference.py`, `controlled_thinning_sim.cpp`, and
-  `aggregate_v4_controlled_thinning.py`: fixed-reference, random-phase
-  controlled thinning. The temporary cache is protected and must never be
-  shared.
+  `aggregate_v4_controlled_thinning.py`: fixed-reference, random-phase,
+  index-episode-anchored controlled thinning. A later recurrent AKI cannot
+  substitute for a missed index episode. The temporary cache is protected and
+  must never be shared.
 - `tests` are supplied as root-level `test_*.py` files for compatibility with
   the frozen scripts.
 - `docs/`: locked phenotype and statistical specifications.
@@ -98,8 +102,10 @@ python3 -m unittest -v test_interval_aki_v4_engine.py
 python3 -m unittest -v test_ndt_continuity_gap_sensitivity.py
 ```
 
-They cover the 48-hour boundary, duplicate measurements, unresolved recovery,
-recurrent AKI, recovery confirmation, and continuity-gap logic.
+Nineteen synthetic tests cover the 48-hour boundary, late index onset,
+duplicate measurements, unresolved recovery, recurrent AKI, recovery
+confirmation, SICdb endpoint re-anchoring, index-episode-anchored thinning and
+continuity-gap logic.
 
 ## Primary analysis
 
@@ -113,7 +119,10 @@ python3 run_v4_primary_inference.py --database eicu --output-dir outputs/eicu
 
 The primary denominator depends on survival and ICU database coverage through
 48 hours after first AKI positivity, not on whether another creatinine was
-actually measured.
+actually measured. Historical baseline measurements are retained from seven
+days before ICU entry; index AKI is searched only during ICU days 0–7; and
+recovery follow-up continues from index onset to spell end. In SICdb, both
+laboratory time and spell end are re-anchored to first ICU bed assignment.
 
 ## Controlled thinning
 
@@ -125,18 +134,21 @@ outputs belong in `results/thinning/`.
 
 The measurement-rich reference trajectory is not a biological gold standard,
 and controlled thinning is not a simulated clinical testing policy. The code
-reports phenotype retention, conditional indeterminacy, and total phenotype
-failure without causal interpretation.
+reports index-episode retention, conditional indeterminacy and total phenotype
+failure without causal interpretation. Later recurrent AKI is recorded
+separately and cannot rescue a missed index episode.
 
 ## Frozen central results
 
-Among first AKI episodes with 48-hour potential ICU observation, persistence
-status was classification-indeterminate in 25.0% of MIMIC-IV, 36.2% of SICdb,
-and 34.0% of eICU episodes. Patient-cluster bootstrap 95% confidence intervals
-were 24.2%–25.8%, 34.3%–38.1%, and 32.7%–35.3%, respectively. The identified sets for the prevalence of persistent AKI were
-38.3%–63.3%, 37.4%–73.6%, and 35.0%–69.0%, respectively. In the fixed eICU
-reference cohort, total phenotype failure was 54.9% with a 24-hour observation
-grid and 78.9% with a 48-hour observation grid.
+Among first observed transition-defined AKI episodes with 48-hour potential ICU
+observation, persistence status was classification-indeterminate in 21.3% of
+MIMIC-IV, 31.8% of SICdb and 30.8% of eICU episodes. Cluster-respecting
+bootstrap 95% confidence intervals were 20.6%–22.2%, 29.9%–33.4% and
+29.5%–32.3%, respectively. Identified sets for the episode-level proportion
+persisting beyond 48 hours were 41.2%–62.6%, 41.5%–73.2% and 37.8%–68.6%.
+In the fixed 9,790-episode eICU reference cohort, total phenotype failure was
+54.8% with a 24-hour observation grid and 77.5% with a 48-hour observation
+grid.
 
 ## Reproducibility boundaries
 
@@ -148,7 +160,7 @@ grid and 78.9% with a 48-hour observation grid.
   because timing and capture are not transportable across the three sources.
 - The final manuscript excludes the earlier mortality landmark, inverse-
   observation weighting and hospital-ranking modules. Those exploratory
-  analyses are not part of the v1.1.0 submission freeze.
+  analyses are not part of the v1.2.0 submission freeze.
 - MIMIC-IV and SICdb inference resamples unique patients. eICU inference first
   resamples hospitals and then unique patients within sampled hospitals,
   retaining all eligible episodes for each sampled patient.
@@ -162,5 +174,5 @@ Cheng Shen, Bohao Xue, and Jin Li. Correspondence: Jin Li,
 
 Code is released under the MIT License. Please cite this repository using
 `CITATION.cff` and cite all three source datasets under their exact versions
-and persistent identifiers. The frozen v1.1.0 archive is available at
-https://doi.org/10.5281/zenodo.22178599.
+and persistent identifiers. The frozen version 1.2.0 archive is available at
+https://doi.org/10.5281/zenodo.22182737 and is recorded in `CITATION.cff`.

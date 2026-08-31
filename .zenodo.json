@@ -1,7 +1,7 @@
 {
   "title": "Measurement-aware identification of 48-hour acute kidney injury persistence",
   "upload_type": "software",
-  "description": "Reproducible phenotype specification, database mappings, statistical scripts, synthetic tests, and non-disclosive aggregate results for interval-defined 48-hour persistence of creatinine-defined acute kidney injury across MIMIC-IV v3.1, SICdb v1.0.8, and eICU-CRD v2.0. Version 1.1.0 corrects unique-patient clustering, uses hospital-to-patient two-stage bootstrap resampling for eICU, removes obsolete mortality, inverse-observation-weighting, and hospital-ranking modules from the submission freeze, and adds core robustness and observation-process outputs.",
+  "description": "Reproducible phenotype specification, database mappings, statistical scripts, synthetic tests, and non-disclosive aggregate results for interval-defined 48-hour persistence of creatinine-defined acute kidney injury across MIMIC-IV v3.1, SICdb v1.0.8, and eICU-CRD v2.0. Version 1.2.0 separates index-AKI search from recovery follow-up, re-anchors the SICdb coverage endpoint to first ICU bed assignment, anchors controlled thinning to the original index episode, and adds stage, one-episode-per-patient, feasibility, late-onset and recurrent-AKI checks.",
   "creators": [
     {"name": "Shen, Cheng"},
     {"name": "Xue, Bohao"},
@@ -9,7 +9,7 @@
   ],
   "license": "MIT",
   "access_right": "open",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "publication_date": "2026-08-31",
   "keywords": [
     "acute kidney injury",

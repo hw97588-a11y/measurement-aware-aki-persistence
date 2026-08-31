@@ -3,123 +3,123 @@
   "scope": "v4 ICU-coverage primary phenotype, structural-censoring separation, threshold robustness, and cluster-appropriate partial-identification inference.",
   "denominator_definition": "First AKI episodes with database ICU coverage continuing through first positive creatinine plus 48 h; no subsequent creatinine measurement is required for inclusion.",
   "population_structure": {
-    "adult_first_continuous_icu_spells": 27223,
-    "unique_patients_in_source_spells": 21442,
-    "patients_with_multiple_source_spells": 3973,
-    "first_aki_episodes": 3867,
-    "unique_patients_with_first_aki_episode": 3572,
+    "adult_first_continuous_icu_spells": 27179,
+    "unique_patients_in_source_spells": 21416,
+    "patients_with_multiple_source_spells": 3963,
+    "first_aki_episodes": 3860,
+    "unique_patients_with_first_aki_episode": 3565,
     "patients_with_multiple_first_aki_episode_admissions": 234,
     "episodes_from_patients_with_multiple_first_aki_episode_admissions": 529,
-    "primary_48h_episodes": 2472,
-    "unique_patients_in_primary_48h_population": 2350,
-    "patients_with_multiple_primary_48h_episode_admissions": 104
+    "primary_48h_episodes": 2458,
+    "unique_patients_in_primary_48h_population": 2338,
+    "patients_with_multiple_primary_48h_episode_admissions": 102
   },
   "primary": {
-    "all_first_aki_episodes": 3867,
-    "structural_coverage_censored_before_48h": 1395,
-    "primary_48h_icu_coverage_denominator": 2472,
+    "all_first_aki_episodes": 3860,
+    "structural_coverage_censored_before_48h": 1402,
+    "primary_48h_icu_coverage_denominator": 2458,
     "primary_categories": {
-      "definite_transient": 652,
-      "definite_persistent": 925,
-      "interval_indeterminate": 605,
-      "right_censored_unresolved": 290
+      "definite_transient": 658,
+      "definite_persistent": 1019,
+      "interval_indeterminate": 644,
+      "right_censored_unresolved": 137
     },
     "monitoring_indeterminate": {
-      "n": 895,
-      "denominator": 2472,
-      "proportion": 0.362055,
+      "n": 781,
+      "denominator": 2458,
+      "proportion": 0.317738,
       "cluster_bootstrap_ci95": [
-        0.342798,
-        0.380551
+        0.298748,
+        0.334291
       ]
     },
     "persistent_identified_set": {
-      "lower_definite_persistent": 0.374191,
-      "upper_not_definite_transient": 0.736246,
-      "width_monitoring_indeterminate": 0.362055
+      "lower_definite_persistent": 0.414565,
+      "upper_not_definite_transient": 0.732303,
+      "width_monitoring_indeterminate": 0.317738
     }
   },
   "partial_identification_inference": {
     "replicates": 2000,
     "percentile_ci": {
       "persistent_lower": [
-        0.355546,
-        0.393484
+        0.395687,
+        0.434111
       ],
       "persistent_upper": [
-        0.71861,
-        0.752558
+        0.714226,
+        0.749898
       ],
       "identified_set_width": [
-        0.342798,
-        0.380551
+        0.298748,
+        0.334291
       ]
     },
     "simultaneous_bootstrap_confidence_region": {
       "method": "Conservative unstudentized max-deviation percentile bootstrap region",
-      "critical_absolute_probability_deviation": 0.022836,
+      "critical_absolute_probability_deviation": 0.023549,
       "persistent_lower": [
-        0.351355,
-        0.397027
+        0.391016,
+        0.438114
       ],
       "persistent_upper": [
-        0.71341,
-        0.759082
+        0.708754,
+        0.755852
       ]
     },
     "resampling": {
       "level": "patient/episode cluster",
-      "clusters": 2350,
-      "episodes": 2472
+      "clusters": 2338,
+      "episodes": 2458
     }
   },
   "threshold_curve": [
     {
       "threshold_hours": 24,
-      "episodes_with_potential_coverage": 3066,
-      "persistent_lower": 0.480757,
-      "persistent_upper": 0.97456,
-      "identified_set_width": 0.493803
+      "episodes_with_potential_coverage": 3034,
+      "persistent_lower": 0.506922,
+      "persistent_upper": 0.97528,
+      "identified_set_width": 0.468359
     },
     {
       "threshold_hours": 36,
-      "episodes_with_potential_coverage": 2592,
-      "persistent_lower": 0.464506,
-      "persistent_upper": 0.91821,
-      "identified_set_width": 0.453704
+      "episodes_with_potential_coverage": 2533,
+      "persistent_lower": 0.506119,
+      "persistent_upper": 0.917884,
+      "identified_set_width": 0.411765
     },
     {
       "threshold_hours": 48,
-      "episodes_with_potential_coverage": 2472,
-      "persistent_lower": 0.374191,
-      "persistent_upper": 0.736246,
-      "identified_set_width": 0.362055
+      "episodes_with_potential_coverage": 2458,
+      "persistent_lower": 0.414565,
+      "persistent_upper": 0.732303,
+      "identified_set_width": 0.317738
     },
     {
       "threshold_hours": 72,
-      "episodes_with_potential_coverage": 2021,
-      "persistent_lower": 0.286492,
-      "persistent_upper": 0.588323,
-      "identified_set_width": 0.301831
+      "episodes_with_potential_coverage": 2007,
+      "persistent_lower": 0.343298,
+      "persistent_upper": 0.574988,
+      "identified_set_width": 0.231689
     },
     {
       "threshold_hours": 96,
-      "episodes_with_potential_coverage": 1708,
-      "persistent_lower": 0.211944,
-      "persistent_upper": 0.482436,
-      "identified_set_width": 0.270492
+      "episodes_with_potential_coverage": 1701,
+      "persistent_lower": 0.289242,
+      "persistent_upper": 0.461493,
+      "identified_set_width": 0.172252
     }
   ],
   "monitoring_indeterminacy_decomposition": {
     "counts": {
-      "no_observed_recovery_right_censored": 290,
-      "recovery_interval_contributes": 93,
-      "onset_interval_contributes": 59,
-      "joint_interval_crossing_not_attributable_to_single_margin": 295,
-      "both_onset_and_recovery_interval_contribute": 158
+      "no_observed_recovery_right_censored": 137,
+      "recovery_interval_contributes": 106,
+      "onset_interval_contributes": 64,
+      "joint_interval_crossing_not_attributable_to_single_margin": 308,
+      "both_onset_and_recovery_interval_contribute": 166
     },
-    "interval_indeterminate_episodes": 605,
-    "onset_interval_width_hours_median": 23.767,
+    "interval_indeterminate_episodes": 644,
+    "onset_interval_width_hours_median": 23.85,
     "recovery_interval_width_hours_median": 24.0,
     "note": "Attribution asks whether the 48-h boundary can be crossed by onset or recovery uncertainty while holding the other endpoint at its closest observed bound. Categories may be joint by construction."
   },

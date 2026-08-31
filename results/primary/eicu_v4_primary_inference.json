@@ -19,52 +19,52 @@
     "structural_coverage_censored_before_48h": 11968,
     "primary_48h_icu_coverage_denominator": 14599,
     "primary_categories": {
-      "definite_transient": 4532,
-      "definite_persistent": 5104,
-      "interval_indeterminate": 3334,
-      "right_censored_unresolved": 1629
+      "definite_transient": 4582,
+      "definite_persistent": 5520,
+      "interval_indeterminate": 3504,
+      "right_censored_unresolved": 993
     },
     "monitoring_indeterminate": {
-      "n": 4963,
+      "n": 4497,
       "denominator": 14599,
-      "proportion": 0.339955,
+      "proportion": 0.308035,
       "cluster_bootstrap_ci95": [
-        0.326502,
-        0.353454
+        0.294849,
+        0.322612
       ]
     },
     "persistent_identified_set": {
-      "lower_definite_persistent": 0.349613,
-      "upper_not_definite_transient": 0.689568,
-      "width_monitoring_indeterminate": 0.339955
+      "lower_definite_persistent": 0.378108,
+      "upper_not_definite_transient": 0.686143,
+      "width_monitoring_indeterminate": 0.308035
     }
   },
   "partial_identification_inference": {
     "replicates": 2000,
     "percentile_ci": {
       "persistent_lower": [
-        0.337904,
-        0.361442
+        0.365256,
+        0.389965
       ],
       "persistent_upper": [
-        0.675848,
-        0.702644
+        0.672788,
+        0.700035
       ],
       "identified_set_width": [
-        0.326502,
-        0.353454
+        0.294849,
+        0.322612
       ]
     },
     "simultaneous_bootstrap_confidence_region": {
       "method": "Conservative unstudentized max-deviation percentile bootstrap region",
-      "critical_absolute_probability_deviation": 0.016373,
+      "critical_absolute_probability_deviation": 0.016477,
       "persistent_lower": [
-        0.33324,
-        0.365986
+        0.361631,
+        0.394585
       ],
       "persistent_upper": [
-        0.673195,
-        0.705941
+        0.669666,
+        0.70262
       ]
     },
     "resampling": {
@@ -79,49 +79,49 @@
     {
       "threshold_hours": 24,
       "episodes_with_potential_coverage": 19802,
-      "persistent_lower": 0.456318,
-      "persistent_upper": 0.907838,
-      "identified_set_width": 0.45152
+      "persistent_lower": 0.471165,
+      "persistent_upper": 0.907484,
+      "identified_set_width": 0.43632
     },
     {
       "threshold_hours": 36,
       "episodes_with_potential_coverage": 17042,
-      "persistent_lower": 0.380413,
-      "persistent_upper": 0.819974,
-      "identified_set_width": 0.439561
+      "persistent_lower": 0.401889,
+      "persistent_upper": 0.819211,
+      "identified_set_width": 0.417322
     },
     {
       "threshold_hours": 48,
       "episodes_with_potential_coverage": 14599,
-      "persistent_lower": 0.349613,
-      "persistent_upper": 0.689568,
-      "identified_set_width": 0.339955
+      "persistent_lower": 0.378108,
+      "persistent_upper": 0.686143,
+      "identified_set_width": 0.308035
     },
     {
       "threshold_hours": 72,
       "episodes_with_potential_coverage": 11049,
-      "persistent_lower": 0.281473,
-      "persistent_upper": 0.527559,
-      "identified_set_width": 0.246086
+      "persistent_lower": 0.328718,
+      "persistent_upper": 0.51697,
+      "identified_set_width": 0.188252
     },
     {
       "threshold_hours": 96,
       "episodes_with_potential_coverage": 8736,
-      "persistent_lower": 0.226419,
-      "persistent_upper": 0.447917,
-      "identified_set_width": 0.221497
+      "persistent_lower": 0.29533,
+      "persistent_upper": 0.426854,
+      "identified_set_width": 0.131525
     }
   ],
   "monitoring_indeterminacy_decomposition": {
     "counts": {
-      "no_observed_recovery_right_censored": 1629,
-      "joint_interval_crossing_not_attributable_to_single_margin": 1646,
-      "both_onset_and_recovery_interval_contribute": 633,
-      "recovery_interval_contributes": 744,
-      "onset_interval_contributes": 311
+      "no_observed_recovery_right_censored": 993,
+      "joint_interval_crossing_not_attributable_to_single_margin": 1703,
+      "both_onset_and_recovery_interval_contribute": 697,
+      "recovery_interval_contributes": 774,
+      "onset_interval_contributes": 330
     },
-    "interval_indeterminate_episodes": 3334,
-    "onset_interval_width_hours_median": 22.833,
+    "interval_indeterminate_episodes": 3504,
+    "onset_interval_width_hours_median": 23.0,
     "recovery_interval_width_hours_median": 24.067,
     "note": "Attribution asks whether the 48-h boundary can be crossed by onset or recovery uncertainty while holding the other endpoint at its closest observed bound. Categories may be joint by construction."
   },
